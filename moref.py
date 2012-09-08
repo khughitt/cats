@@ -1,4 +1,4 @@
-#!/bin/env python2
+#!/bin/env python
 """
 moref:  more for FASTA files
 """
