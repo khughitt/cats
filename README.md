@@ -3,17 +3,18 @@ moref
 
 more-like tool to pretty-print FASTA sequence files.
 
+Screenshot
+----------
+![moref screenshot](https://raw.github.com/khughitt/moref/master/doc/screenshot.png)
+
 Installation
 ------------
-moref depends on the BioPython, which can be installed using pip, e.g.:
+*pre-requisites*
+* [BioPython](http://biopython.org/wiki/Biopython)
 
-    sudo pip install biopython
-
-Next, install moref using the standard setup.py installation:
+*installation:*
 
     sudo python setup.py install
-    
-Done!
 
 Usage
 -----
