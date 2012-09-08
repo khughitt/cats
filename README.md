@@ -32,3 +32,4 @@ TODO
 3. Seq record range (e.g. moref test.fasta 1 20)
 4. Options to highlight/bolden interesting features
 5. Built-in mechanism to display x lines at a time? (more/less style)
+6. Add option to print available colors

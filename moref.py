@@ -31,6 +31,22 @@ def main():
     # DNA
     dna = dict((x, colors[i] + x) for i, x in enumerate(('A', 'C', 'G', 'T')))
     
+    # Use custom colors if specified
+    config_file = os.path.expanduser("~/.morefrc")
+    if os.path.isfile(config_file):
+        # read config file
+        import ConfigParser
+        config = ConfigParser.ConfigParser()
+        config.read(config_file)
+        #config.readfp(open(config_file, 'r+'))
+        
+        # override color choices
+        for k,v in config.items('dna'):
+            dna[k.upper()] = "\033%s%s" % (v, k.upper())
+            
+    # for x in range(1,10):
+    # print "\033[03%dmTEST   \033[09%dmTEST" % (x,x)
+
     # bold text
     regular = '\033[0;090m'
     bold = '\033[1;090m'    
