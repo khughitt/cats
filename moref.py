@@ -61,34 +61,45 @@ def main():
     # start/stop codons
     stop_template = '\033[0;041m\033[1;038m%s\033[0m'
     
-    stop_codons = [
-        (dna['T'] + dna['A'] + dna['G'], stop_template % "TAG"),
-        (dna['T'] + dna['A'] + dna['A'], stop_template % "TAA"),
-        (dna['T'] + dna['G'] + dna['A'], stop_template % "TGA")
-    ]
+    stop_codons = {
+        "TAG": stop_template % "TAG",
+        "TAA": stop_template % "TAA",
+        "TGA": stop_template % "TGA"
+    }
             
     # for x in range(1,10):
     # print "\033[03%dmTEST   \033[09%dmTEST" % (x,x)
 
     # bold text
-    regular = '\033[0;090m'
-    bold = '\033[1;090m'    
+    reset = '\033[0m'
+    bold = '\033[1m'    
     
     # loop through and print seqs
     # @NOTE - could pause here after each record if desired
     for seq in seqs:
         print(bold + seq.description)
         
-        pretty = regular
-        for letter in seq.seq:
-            pretty += dna[letter]
-            
-        # check for stop codons if requested
-        if 'stop_codons' in args and args.stop_codons:
-            for codon in stop_codons:
-                pretty = pretty.replace(codon[0], codon[1]) 
+        # highlight stop codons?
+        highlight_stop_codons = 'stop_codons' in args and args.stop_codons
+        
+        # For DNA, read bases three at a time
+        # For now, assume reading frame starts from index 0
+        pretty = reset
+        for codon in chunks(seq.seq, 3):
+            # If stop codon is encountered, highlight it
+            if highlight_stop_codons and str(codon) in stop_codons:
+                pretty += stop_codons[str(codon)]
+            # otherwise add colored bases
+            else:
+                for letter in codon:
+                    pretty += dna[letter]
             
         print(pretty + "\n")
+        
+def chunks(seq, n):
+    """Yield successive n-sized chunks from seq."""
+    for i in range(0, len(seq), n):
+        yield seq[i:i + n]
 
 if __name__ == "__main__":
     main()
