@@ -59,10 +59,12 @@ def main():
             dna[k.upper()] = "\033%s%s" % (v, k.upper())
 
     # start/stop codons
+    stop_template = '\033[0;041m\033[1;038m%s\033[0m'
+    
     stop_codons = [
-        dna['T'] + dna['A'] + dna['G'],
-        dna['T'] + dna['A'] + dna['A'],
-        dna['T'] + dna['G'] + dna['A']
+        (dna['T'] + dna['A'] + dna['G'], stop_template % "TAG"),
+        (dna['T'] + dna['A'] + dna['A'], stop_template % "TAA"),
+        (dna['T'] + dna['G'] + dna['A'], stop_template % "TGA")
     ]
             
     # for x in range(1,10):
@@ -82,9 +84,9 @@ def main():
             pretty += dna[letter]
             
         # check for stop codons if requested
-        if 'stop_codon' in args and args.stop_codon:
+        if 'stop_codons' in args and args.stop_codons:
             for codon in stop_codons:
-                pretty.replace(codon, '\033[0;041mSTOP') 
+                pretty = pretty.replace(codon[0], codon[1]) 
             
         print(pretty + "\n")
 
