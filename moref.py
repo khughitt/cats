@@ -101,41 +101,52 @@ def main():
     # For now only display amino acids when translate requested
     # @TODO: automatically detect/allow user to specify
     if "translate" in args:
-        # Amino Acids
-        for seq in seqs:
-            pretty = reset
-
-            # Print description
-            print(bold + seq.description)
-            
-            # Translate and add stylized residues to otput string
-            for residue in seq.seq[args.translate:].translate():
-                 pretty += amino_acids[residue]
+        if "no_color" in args and args.no_color:
+            for seq in seqs:
+                print(seq.description)
+                print(seq.seq[args.translate:].translate())
+        else:
+            # Amino Acids
+            for seq in seqs:
+                pretty = reset
+    
+                # Print description
+                print(bold + seq.description)
+                
+                # Translate and add stylized residues to otput string
+                for residue in seq.seq[args.translate:].translate():
+                     pretty += amino_acids[residue]
                  
-        print(pretty + "\n")
+                print(pretty + "\n")
     else:
         # Nuceotides
         # loop through and print seqs
         # @NOTE - could pause here after each record if desired
-        for seq in seqs:
-            print(bold + seq.description)
-            
-            # highlight stop codons?
-            highlight_stop_codons = 'stop_codons' in args and args.stop_codons
-            
-            # For DNA, read bases three at a time
-            # For now, assume reading frame starts from index 0
-            pretty = reset
-            for codon in chunks(seq.seq, 3):
-                # If stop codon is encountered, highlight it
-                if highlight_stop_codons and str(codon) in stop_codons:
-                    pretty += stop_codons[str(codon)]
-                # otherwise add colored bases
-                else:
-                    for letter in codon:
-                        pretty += dna[letter]
+        if "no_color" in args and args.no_color:
+            for seq in seqs:
+                print(seq.description)
+                print(seq.seq)
+        else:
+            for seq in seqs:
+                print(bold + seq.description)
                 
-            print(pretty + "\n")
+                # highlight stop codons?
+                highlight_stop_codons = ('stop_codons' in args and 
+                                         args.stop_codons)
+                
+                # For DNA, read bases three at a time
+                # For now, assume reading frame starts from index 0
+                pretty = reset
+                for codon in chunks(seq.seq, 3):
+                    # If stop codon is encountered, highlight it
+                    if highlight_stop_codons and str(codon) in stop_codons:
+                        pretty += stop_codons[str(codon)]
+                    # otherwise add colored bases
+                    else:
+                        for letter in codon:
+                            pretty += dna[letter]
+                    
+                print(pretty + "\n")
         
 def chunks(seq, n):
     """Yield successive n-sized chunks from seq."""
@@ -145,6 +156,8 @@ def chunks(seq, n):
 def get_args():
     """Parses input and returns arguments"""
     parser = ArgumentParser(description='Pretty-print sequence data')
+    parser.add_argument('-n', '--no-color', dest='no_color', 
+                        action='store_true')
     parser.add_argument('--start-codons', dest='start_codons',
                         action='store_true',
                         help='Highlight any start codons in DNA/RNA output')
