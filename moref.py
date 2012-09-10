@@ -103,19 +103,25 @@ def main():
     if "translate" in args:
         if "no_color" in args and args.no_color:
             for seq in seqs:
-                print(seq.description)
-                print(seq.seq[args.translate:].translate())
+                print(">" + seq.description)
+                translated = seq.seq[args.translate:].translate()
+                print(textwrap.wrap(translated, args.line_width))
         else:
             # Amino Acids
             for seq in seqs:
                 pretty = reset
     
                 # Print description
-                print(bold + seq.description)
+                print(bold + ">" + seq.description)
                 
                 # Translate and add stylized residues to otput string
-                for residue in seq.seq[args.translate:].translate():
+                translated = seq.seq[args.translate:].translate()
+                
+                for i, residue in enumerate(translated):
                      pretty += amino_acids[residue]
+                     # Add new lines to ensure desired line width
+                     if i % args.line_width == 0:
+                         pretty += "\n"
                  
                 print(pretty + "\n")
     else:
@@ -124,11 +130,11 @@ def main():
         # @NOTE - could pause here after each record if desired
         if "no_color" in args and args.no_color:
             for seq in seqs:
-                print(seq.description)
+                print(">" + seq.description)
                 print(seq.seq)
         else:
             for seq in seqs:
-                print(bold + seq.description)
+                print(bold + ">" + seq.description)
                 
                 # highlight stop codons?
                 highlight_stop_codons = ('stop_codons' in args and 
@@ -169,6 +175,9 @@ def get_args():
                         help='Translate a nucleotide sequence to an ' +
                              'amino acid sequence.',
                         dest='translate')
+    parser.add_argument('-w', '--line-width', type=int, metavar="WIDTH",
+                        help='Number of characters to limit lines to ' + 
+                             '(default: 60)', default=60, dest='line_width')
     args = parser.parse_args()
     return args
 
