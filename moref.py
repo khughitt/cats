@@ -7,19 +7,6 @@ import os
 from argparse import ArgumentParser
 from Bio import SeqIO
 
-def get_args():
-    """Parses input and returns arguments"""
-    parser = ArgumentParser(description='Pretty-print sequence data')
-    parser.add_argument('--start-codons', dest='start_codons',
-                        action='store_true',
-                        help='Highlight any start codons in DNA/RNA output')
-    parser.add_argument('--stop-codons', dest='stop_codons',
-                        action='store_true',
-                        help='Highlight any stop codons in DNA/RNA output')
-    parser.add_argument('file', help='File containing sequence data.')
-    args = parser.parse_args()
-    return args
-
 def main():
     """moref main"""
     # Check for input file
@@ -44,6 +31,42 @@ def main():
     
     # DNA
     dna = dict((x, colors[i] + x) for i, x in enumerate(('A', 'C', 'G', 'T')))
+    
+    # RNA
+    
+    # Protein
+    # @TODO: Order by electronegativity?
+    amino_acid_colors = {
+        # Positively charged side chains (blue)
+        "R": 75,
+        "H": 69,
+        "K": 63,
+        # Negatively charged side chains (red)
+        "D": 168,
+        "E": 160,
+        # Polar uncharged side chains (purple)
+        "S": 189,
+        "T": 183,
+        "N": 177,
+        "Q": 171,
+        # Special cases (yellow)
+        "C": 190,
+        "U": 191,
+        "G": 192,
+        "P": 193,
+        # Hydrophobic side chains (green)
+        "A": 121,
+        "V": 120,
+        "I": 119,
+        "L": 118,
+        "M": 85,
+        "F": 84,
+        "Y": 83,
+        "W": 82
+    }
+
+    amino_acids = dict((k, '\033[38;05;%dm%s' % (v, k)) for 
+                       k, v in amino_acid_colors.items())
     
     # Use custom colors if specified
     config_file = os.path.expanduser("~/.morefrc")
@@ -100,6 +123,22 @@ def chunks(seq, n):
     """Yield successive n-sized chunks from seq."""
     for i in range(0, len(seq), n):
         yield seq[i:i + n]
+        
+def get_args():
+    """Parses input and returns arguments"""
+    parser = ArgumentParser(description='Pretty-print sequence data')
+    parser.add_argument('--start-codons', dest='start_codons',
+                        action='store_true',
+                        help='Highlight any start codons in DNA/RNA output')
+    parser.add_argument('--stop-codons', dest='stop_codons',
+                        action='store_true',
+                        help='Highlight any stop codons in DNA/RNA output')
+    parser.add_argument('file', help='File containing sequence data.')
+    parser.add_argument('-t', '--translate', type=int, metavar="OFFSET",
+                        help='Translate a nucleotide sequence to an ' +
+                             'amino acid sequence.')
+    args = parser.parse_args()
+    return args
 
 if __name__ == "__main__":
     main()
