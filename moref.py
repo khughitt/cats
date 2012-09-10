@@ -124,7 +124,7 @@ def main():
                          if i % args.line_width == 0:
                              pretty += "\n"
                      
-                    print(pretty + "\n")
+                    print(pretty)
         else:
             # Nuceotides
             # loop through and print seqs
@@ -153,7 +153,7 @@ def main():
                             for letter in codon:
                                 pretty += dna[letter]
                         
-                    print(pretty + "\n")
+                    print(pretty)
     except IOError, e:
         pass
     
