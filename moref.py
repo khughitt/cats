@@ -1,9 +1,13 @@
 #!/bin/env python
 """
 moref:  more for FASTA files
+
+TODO:
+    *support for piping into head/tail
 """
 import sys
 import os
+import textwrap
 from argparse import ArgumentParser
 from Bio import SeqIO
 
@@ -63,7 +67,8 @@ def main():
         "F": 84,
         "Y": 83,
         "W": 82,
-        "*": 255
+        "*": 255,
+        "-": 255
     }
 
     amino_acids = dict((k, '\033[38;05;%dm%s' % (v, k)) for 
@@ -101,12 +106,22 @@ def main():
     # For now only display amino acids when translate requested
     # @TODO: automatically detect/allow user to specify
     try:
-        if "translate" in args:
-            if "no_color" in args and args.no_color:
+        if args.translate:
+            # determine frame offset to use
+            offset = abs(args.translation_offset) - 1
+
+            # print without colors
+            if args.no_color:
                 for seq in seqs:
                     print(">" + seq.description)
-                    translated = seq.seq[args.translate:].translate()
-                    print(textwrap.wrap(translated, args.line_width))
+                    # forward frames
+                    if args.translation_offset > 0:
+                        translated = str(seq.seq[offset:].translate())
+                    # complemented frames
+                    else:
+                        reverse_comp = seq.seq.reverse_complement()[offset:]
+                        translated = str(reverse_comp.translate())
+                    print("\n".join(textwrap.wrap(translated, args.line_width)))
             else:
                 # Amino Acids
                 for seq in seqs:
@@ -116,7 +131,11 @@ def main():
                     print(bold + ">" + seq.description)
                     
                     # Translate and add stylized residues to otput string
-                    translated = seq.seq[args.translate:].translate()
+                    if args.translation_offset > 0:
+                        translated = seq.seq[offset:].translate()
+                    else:
+                        reverse_comp = seq.seq.reverse_complement()[offset:]
+                        translated = str(reverse_comp.translate())
                     
                     for i, residue in enumerate(translated, start=1):
                          pretty += amino_acids[residue]
@@ -129,7 +148,7 @@ def main():
             # Nuceotides
             # loop through and print seqs
             # @NOTE - could pause here after each record if desired
-            if "no_color" in args and args.no_color:
+            if args.no_color:
                 for seq in seqs:
                     print(">" + seq.description)
                     print(seq.seq)
@@ -137,16 +156,12 @@ def main():
                 for seq in seqs:
                     print(bold + ">" + seq.description)
                     
-                    # highlight stop codons?
-                    highlight_stop_codons = ('stop_codons' in args and 
-                                             args.stop_codons)
-                    
                     # For DNA, read bases three at a time
                     # For now, assume reading frame starts from index 0
                     pretty = reset
                     for codon in chunks(seq.seq, 3):
                         # If stop codon is encountered, highlight it
-                        if highlight_stop_codons and str(codon) in stop_codons:
+                        if args.stop_codons and str(codon) in stop_codons:
                             pretty += stop_codons[str(codon)]
                         # otherwise add colored bases
                         else:
@@ -166,18 +181,24 @@ def get_args():
     """Parses input and returns arguments"""
     parser = ArgumentParser(description='Pretty-print sequence data')
     parser.add_argument('-n', '--no-color', dest='no_color', 
-                        action='store_true')
+                        action='store_true', default=False)
     parser.add_argument('--start-codons', dest='start_codons',
-                        action='store_true',
+                        action='store_true', default=False,
                         help='Highlight any start codons in DNA/RNA output')
     parser.add_argument('--stop-codons', dest='stop_codons',
-                        action='store_true',
+                        action='store_true', default=False,
                         help='Highlight any stop codons in DNA/RNA output')
     parser.add_argument('file', help='File containing sequence data.')
-    parser.add_argument('-t', '--translate', type=int, metavar="OFFSET",
+    parser.add_argument('-t', '--translate', action='store_true',
                         help='Translate a nucleotide sequence to an ' +
                              'amino acid sequence.',
-                        dest='translate')
+                        dest='translate', default=False)
+    parser.add_argument('-o', '--translation-offset', metavar='OFFSET', 
+                        type=int, default=1, dest='translation_offset',
+                        help='Offset to use when translating to amino acids: ' +
+                             'forward and reverse complement frames are ' +
+                             'specified using 1, 2, 3, -1, -2, and -3. The ' + 
+                             'default offset is 1 (first foward frame).')
     parser.add_argument('-w', '--line-width', type=int, metavar="WIDTH",
                         help='Number of characters to limit lines to ' + 
                              '(default: 60)', default=60, dest='line_width')
