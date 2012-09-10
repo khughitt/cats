@@ -62,7 +62,8 @@ def main():
         "M": 85,
         "F": 84,
         "Y": 83,
-        "W": 82
+        "W": 82,
+        "*": 255
     }
 
     amino_acids = dict((k, '\033[38;05;%dm%s' % (v, k)) for 
@@ -97,27 +98,44 @@ def main():
     reset = '\033[0m'
     bold = '\033[1m'    
     
-    # loop through and print seqs
-    # @NOTE - could pause here after each record if desired
-    for seq in seqs:
-        print(bold + seq.description)
-        
-        # highlight stop codons?
-        highlight_stop_codons = 'stop_codons' in args and args.stop_codons
-        
-        # For DNA, read bases three at a time
-        # For now, assume reading frame starts from index 0
-        pretty = reset
-        for codon in chunks(seq.seq, 3):
-            # If stop codon is encountered, highlight it
-            if highlight_stop_codons and str(codon) in stop_codons:
-                pretty += stop_codons[str(codon)]
-            # otherwise add colored bases
-            else:
-                for letter in codon:
-                    pretty += dna[letter]
+    # For now only display amino acids when translate requested
+    # @TODO: automatically detect/allow user to specify
+    if "translate" in args:
+        # Amino Acids
+        for seq in seqs:
+            pretty = reset
+
+            # Print description
+            print(bold + seq.description)
             
+            # Translate and add stylized residues to otput string
+            for residue in seq.seq[args.translate:].translate():
+                 pretty += amino_acids[residue]
+                 
         print(pretty + "\n")
+    else:
+        # Nuceotides
+        # loop through and print seqs
+        # @NOTE - could pause here after each record if desired
+        for seq in seqs:
+            print(bold + seq.description)
+            
+            # highlight stop codons?
+            highlight_stop_codons = 'stop_codons' in args and args.stop_codons
+            
+            # For DNA, read bases three at a time
+            # For now, assume reading frame starts from index 0
+            pretty = reset
+            for codon in chunks(seq.seq, 3):
+                # If stop codon is encountered, highlight it
+                if highlight_stop_codons and str(codon) in stop_codons:
+                    pretty += stop_codons[str(codon)]
+                # otherwise add colored bases
+                else:
+                    for letter in codon:
+                        pretty += dna[letter]
+                
+            print(pretty + "\n")
         
 def chunks(seq, n):
     """Yield successive n-sized chunks from seq."""
@@ -136,7 +154,8 @@ def get_args():
     parser.add_argument('file', help='File containing sequence data.')
     parser.add_argument('-t', '--translate', type=int, metavar="OFFSET",
                         help='Translate a nucleotide sequence to an ' +
-                             'amino acid sequence.')
+                             'amino acid sequence.',
+                        dest='translate')
     args = parser.parse_args()
     return args
 
