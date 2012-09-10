@@ -3,7 +3,8 @@
 moref:  more for FASTA files
 
 TODO:
-    *support for piping into head/tail
+    *support for piping colored output into head/tail
+    *support for specifying input file format
 """
 import sys
 import os
