@@ -117,7 +117,7 @@ def main():
                 # Translate and add stylized residues to otput string
                 translated = seq.seq[args.translate:].translate()
                 
-                for i, residue in enumerate(translated):
+                for i, residue in enumerate(translated, start=1):
                      pretty += amino_acids[residue]
                      # Add new lines to ensure desired line width
                      if i % args.line_width == 0:
