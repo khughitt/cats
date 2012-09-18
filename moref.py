@@ -110,6 +110,10 @@ def main():
         if args.translate:
             # determine frame offset to use
             offset = abs(args.translation_offset) - 1
+            
+            # select translation table
+            # see: ftp://ftp.ncbi.nlm.nih.gov/entrez/misc/data/gc.prt
+            table = CodonTable.unambiguous_dna_by_name[]
 
             # print without colors
             if args.no_color:
@@ -117,11 +121,15 @@ def main():
                     print(">" + seq.description)
                     # forward frames
                     if args.translation_offset > 0:
-                        translated = str(seq.seq[offset:].translate())
+                        translated = str(seq.seq[offset:].translate(
+                            table=args.translation_table)
+                    )
                     # complemented frames
                     else:
                         reverse_comp = seq.seq.reverse_complement()[offset:]
-                        translated = str(reverse_comp.translate())
+                        translated = str(reverse_comp.translate(
+                            table=args.translation_table)
+                        )
                     print("\n".join(textwrap.wrap(translated, args.line_width)))
             else:
                 # Amino Acids
@@ -133,10 +141,14 @@ def main():
                     
                     # Translate and add stylized residues to otput string
                     if args.translation_offset > 0:
-                        translated = seq.seq[offset:].translate()
+                        translated = seq.seq[offset:].translate(
+                            table=args.translation_table
+                        )
                     else:
                         reverse_comp = seq.seq.reverse_complement()[offset:]
-                        translated = str(reverse_comp.translate())
+                        translated = str(reverse_comp.translate(
+                            table=args.translation_table
+                        ))
                     
                     for i, residue in enumerate(translated, start=1):
                          pretty += amino_acids[residue]
@@ -194,6 +206,9 @@ def get_args():
                         help='Translate a nucleotide sequence to an ' +
                              'amino acid sequence.',
                         dest='translate', default=False)
+    parser.add_argument('--translation-table', dest='translation_table',
+                        default=1, help='NCBI translation table ' +
+                        'to use (default=1)', metavar='NUMBER')
     parser.add_argument('-o', '--translation-offset', metavar='OFFSET', 
                         type=int, default=1, dest='translation_offset',
                         help='Offset to use when translating to amino acids: ' +
