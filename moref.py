@@ -8,15 +8,14 @@ TODO:
     *support for piping colored output into head/tail
     *support for specifying input file format
 """
-import sys
-import os
-import textwrap
-from argparse import ArgumentParser
-from Bio import SeqIO
-from Bio import Seq, SeqRecord
-
 def colorize(input_, **kwargs):
     """Colorizes the target sequence"""
+    import os
+    import textwrap
+    from Bio import SeqIO
+    from Bio import Seq, SeqRecord
+    from Bio.Alphabet import IUPAC
+
     # Get default args
     args = _defaults()
     args.update(kwargs)
@@ -29,7 +28,7 @@ def colorize(input_, **kwargs):
         else:
             # Sequence string?
             try:
-                seqs = [SeqRecord.SeqRecord(input_)]
+                seqs = [SeqRecord.SeqRecord(Seq.Seq(input_, IUPAC.IUPACUnambiguousDNA()))]
             except:
                 raise UnrecognizedInput
 
@@ -149,6 +148,7 @@ def colorize(input_, **kwargs):
                 # Print description
                 print(bold + ">" + seq.description)
 
+                # print seq.seq[frame:]
                 # Translate and add stylized residues to otput string
                 if args['translation_frame'] > 0:
                     translated = seq.seq[frame:].translate(
@@ -182,7 +182,7 @@ def colorize(input_, **kwargs):
                 # For DNA, read bases three at a time
                 # For now, assume reading frame starts from index 0
                 pretty = reset
-                for codon in chunks(seq.seq, 3):
+                for codon in _chunks(seq.seq, 3):
                     # If stop codon is encountered, highlight it
                     if args['stop_codons'] and str(codon) in stop_codons:
                         pretty += stop_codons[str(codon)]
@@ -192,12 +192,14 @@ def colorize(input_, **kwargs):
                             pretty += dna[letter]
                 print(pretty)
 
-def chunks(seq, n):
+def _chunks(seq, n):
     """Yield successive n-sized chunks from seq."""
     for i in range(0, len(seq), n):
         yield seq[i:i + n]
 def _get_args():
     """Parses input and returns arguments"""
+    from argparse import ArgumentParser
+
     parser = ArgumentParser(description='Pretty-print sequence data')
     parser.add_argument('-n', '--no-color', dest='no_color', 
                         action='store_true')
@@ -224,11 +226,10 @@ def _get_args():
                         help='Number of characters to limit lines to ' + 
                              '(default: 80)', dest='line_width')
     args = parser.parse_args()
-    
+
     # convert to a python dict and return without 
     return dict((k, v) for k, v in vars(args).iteritems() if v is not None)
 
-    
 def _defaults():
     """Returns a dictionary containing the default arguments to use during
     colorization."""
@@ -243,13 +244,16 @@ def _defaults():
     }
 
 class UnrecognizedInput(IOError):
-    """Unrecognize input error"""
+    """Unrecognized input error"""
     pass
 
 if __name__ == "__main__":
+    import sys
+    import os
+
     # Check for input file
     kwargs = _get_args()
-    
+
     if not 'file' in kwargs:
         print("No input file specified")
         sys.exit()
