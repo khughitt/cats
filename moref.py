@@ -32,9 +32,9 @@ def colorize(input_, **kwargs):
             except:
                 raise UnrecognizedInput
 
-    elif typeof(input_, SeqRecord.SeqRecord):
+    elif isinstance(input_, SeqRecord.SeqRecord):
         seqs = [input_]
-    elif typeof(input_, Seq.Seq):
+    elif isinstance(input_, Seq.Seq):
         seqs = [SeqRecord.SeqRecord(input_)]
     else:
         raise UnrecognizedInput
