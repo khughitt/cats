@@ -1,13 +1,15 @@
-moref
-=====
+cats
+====
 
-more-like tool to pretty-print FASTA sequence files.
+pretty print and other basic manipulations for sequence data.
 
 Screenshot
+
 ----------
-![moref screenshot](https://raw.github.com/khughitt/moref/master/doc/screenshot.png)
+![cats screenshot](https://raw.github.com/khughitt/cats/master/doc/screenshot.png)
 
 Installation
+
 ------------
 *pre-requisites*
 * [BioPython](http://biopython.org/wiki/Biopython)
@@ -16,28 +18,29 @@ Installation
 
     sudo python setup.py install
 
+
 Usage
 -----
 
 Basic usage:
 
-    moref <input file>
+    cats <input file>
     
 Some more examples:
 
-    moref --translate -translations-offset -1 sample.fasta
-    moref -t -n sample.fasta
-    moref -w 80 sample.fasta
-    moref --stop-codons 80 sample.fasta
+    cats --translate -translations-offset -1 sample.fasta
+    cats -t -n sample.fasta
+    cats -w 80 sample.fasta
+    cats --stop-codons 80 sample.fasta
     
 You can also pipe the output into less to page through output:
     
-    moref sample.fasta | less -FRX
+    cats sample.fasta | less -FRX
     
 TODO
 ----
 1. RNA
-2. Seq record range (e.g. moref test.fasta 1 20)
+2. Seq record range (e.g. cats test.fasta 1 20)
 3. Options to highlight/bolden interesting features
 4. Built-in mechanism to display x lines at a time? (more/less style)
 5. Add option to print available colors

@@ -1,5 +1,5 @@
 """
-moref: more for FASTA files
+cats: cat for sequnce data
 """
 DOCLINES = __doc__.split("\n")
 
@@ -29,14 +29,14 @@ setup(
     long_description="\n".join(DOCLINES[2:]),
     maintainer="khughitt@umd.edu",
     maintainer_email="khughitt@umd.edu",
-    name="moref",
+    name="cats",
     platforms=["Windows", "Linux", "Solaris", "Mac OS-X", "Unix"],
-    provides=['moref'],
-    py_modules=['moref'],
+    provides=['cats'],
+    py_modules=['cats'],
     url="",
     use_2to3=True,
     version="0.1",
     entry_points={
-        'console_scripts': ['moref = moref:main']
+        'console_scripts': ['cats = cats:main']
     }
 )

@@ -1,6 +1,6 @@
 #!/bin/env python
 """
-moref:  more for FASTA files
+cats: cat for sequence data
 
 Keith Hughitt <khughitt@umd.edu>
 
@@ -87,7 +87,7 @@ def colorize(input_, **kwargs):
                        k, v in amino_acid_colors.items())
 
     # Use custom colors if specified
-    config_file = os.path.expanduser("~/.morefrc")
+    config_file = os.path.expanduser("~/.catsrc")
     if os.path.isfile(config_file):
         # read config file
         import ConfigParser
