@@ -24,7 +24,7 @@ def colorize(input_, **kwargs):
     if isinstance(input_, basestring):
         if os.path.isfile(input_):
             # Read in FASTA file
-            seqs = SeqIO.parse(filepath, 'fasta')
+            seqs = SeqIO.parse(input_, 'fasta')
         else:
             # Sequence string?
             try:
@@ -247,7 +247,8 @@ class UnrecognizedInput(IOError):
     """Unrecognized input error"""
     pass
 
-if __name__ == "__main__":
+def main():
+    """Main"""
     import sys
     import os
 
@@ -264,3 +265,8 @@ if __name__ == "__main__":
         sys.exit()
 
     colorize(filepath, **kwargs)
+
+if __name__ == "__main__":
+    import sys
+    sys.exit(main())
+
