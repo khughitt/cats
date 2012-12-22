@@ -1,4 +1,5 @@
-#!/bin/env python
+#!/usr/bin/env python
+#-*- coding:utf-8 -*-
 """
 cats: cat for sequence data
 
@@ -196,6 +197,7 @@ def _chunks(seq, n):
     """Yield successive n-sized chunks from seq."""
     for i in range(0, len(seq), n):
         yield seq[i:i + n]
+
 def _get_args():
     """Parses input and returns arguments"""
     from argparse import ArgumentParser
@@ -242,6 +244,14 @@ def _defaults():
         "translation_frame": 1,
         "line_width": 80
     }
+    
+def _print_logo():
+    """Print cats logo"""
+    print("\n\033[38;05;196m `·.,¸,.·*¯`·.,¸,.·*·\033[0m╭━━━━━╮\n"
+          "\033[38;05;220m`·.,¸,.·*¯`·.,¸,.·*·.\033[0m|:::: /\_/\    "
+          "\033[38;05;196mc\033[38;05;220ma\033[38;05;46mt\033[38;05;93ms\n"
+          "\033[38;05;46m `·.,¸,.·*¯`·.,¸,.·\033[0m╰ |::::(◕ ω ◕)   biological sequence printer\n"
+          "\033[38;05;93m `·.,¸,.·*¯`·.,¸,.-·*·\033[0mu-u━━-u--u\n")
 
 class UnrecognizedInput(IOError):
     """Unrecognized input error"""
@@ -251,13 +261,14 @@ def main():
     """Main"""
     import sys
     import os
+    
+    # If not arguments specified dispay help
+    if (len(sys.argv) == 1) or ("-h" in sys.argv) or ("--help" in sys.argv):
+        _print_logo()
 
     # Check for input file
     kwargs = _get_args()
-
-    if not 'file' in kwargs:
-        print("No input file specified")
-        sys.exit()
+    
     filepath = os.path.expanduser(kwargs['file'])
 
     if not os.path.isfile(filepath):
