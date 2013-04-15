@@ -8,6 +8,8 @@ Keith Hughitt <khughitt@umd.edu>
 TODO:
     *support for piping colored output into head/tail
     *support for specifying input file format
+    *generalizing highlight support (can keep --cpg, etc as convenience methods
+     which use the highlight functionality)
 """
 def colorize(input_, **kwargs):
     """Colorizes the target sequence"""
@@ -187,10 +189,17 @@ def colorize(input_, **kwargs):
                     # If stop codon is encountered, highlight it
                     if args['stop_codons'] and str(codon) in stop_codons:
                         pretty += stop_codons[str(codon)]
+                    
                     # otherwise add colored bases
                     else:
                         for letter in codon:
                             pretty += dna[letter]
+
+                # Highlight CpG dinucleotides
+                if args['cpg']:
+                    pretty = pretty.replace(dna['C'] + dna['G'], 
+                                            '\033[0;044m\033[1;038mCG\033[0m')
+
                 print(pretty)
 
 def _chunks(seq, n):
@@ -211,6 +220,9 @@ def _get_args():
     parser.add_argument('--stop-codons', dest='stop_codons',
                         action='store_true',
                         help='Highlight any stop codons in DNA/RNA output')
+    parser.add_argument('--cpg', dest='cpg',
+                        action='store_true',
+                        help='Highlight CpG dinucleotides')
     parser.add_argument('file', help='File containing sequence data.')
     parser.add_argument('-t', '--translate', action='store_true',
                         help='Translate a nucleotide sequence to an ' +
