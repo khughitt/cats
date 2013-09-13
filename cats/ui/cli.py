@@ -12,14 +12,38 @@ TODO:
      which use the highlight functionality)
     *alternate color schemes (e.g. http://www.ugr.es/~proyecto08173/qbiofisica/PROGRAMAS%20DE%20ORDENADOR/Analisis%20grafico%20de%20macromoleculas%20-%20Rastop%202.2/help/colour.htm)
 """
+def main():
+    """Main"""
+    import sys
+    import os
+    from cats import formatter
+
+    # If not arguments specified dispay help
+    if (len(sys.argv) == 1) or ("-h" in sys.argv) or ("--help" in sys.argv):
+        _print_logo()
+
+    # Check for input file
+    kwargs = _get_args()
+
+    filepath = os.path.expanduser(kwargs['file'])
+
+    if not os.path.isfile(filepath):
+        print("No input specified")
+        sys.exit()
+
+    # Get default args
+    args = _defaults()
+    args.update(kwargs)
+
+    formatter.format(filepath, args)
 
 def _get_args():
     """Parses input and returns arguments"""
     from argparse import ArgumentParser
 
     parser = ArgumentParser(description='Pretty-print sequence data')
-    parser.add_argument('-n', '--no-color', dest='no_color', 
-                        action='store_true')
+    parser.add_argument('--no-color', dest='color', 
+                        action='store_false')
     parser.add_argument('--start-codons', dest='start_codons',
                         action='store_true',
                         help='Highlight any start codons in DNA/RNA output')
@@ -54,7 +78,7 @@ def _defaults():
     """Returns a dictionary containing the default arguments to use during
     colorization."""
     return {
-        "no_color": False,
+        "color": True,
         "start_codons": False,
         "stop_codons": False,
         "translate": False,
@@ -70,32 +94,4 @@ def _print_logo():
           "\033[38;05;196mc\033[38;05;220ma\033[38;05;46mt\033[38;05;93ms\n"
           "\033[38;05;46m`·.G,¸,.·C`·.,¸,.T·\033[0m╰ |::::(◕ ω ◕)   biological sequence printer\n"
           "\033[38;05;93m`·.A,¸,.·A`·.,¸,.T·`·.\033[0mu-u━━-u--u\n")
-
-class UnrecognizedInput(IOError):
-    """Unrecognized input error"""
-    pass
-
-def main():
-    """Main"""
-    import sys
-    import os
-
-    # If not arguments specified dispay help
-    if (len(sys.argv) == 1) or ("-h" in sys.argv) or ("--help" in sys.argv):
-        _print_logo()
-
-    # Check for input file
-    kwargs = _get_args()
-
-    filepath = os.path.expanduser(kwargs['file'])
-
-    if not os.path.isfile(filepath):
-        print("No input specified")
-        sys.exit()
-
-    colorize(filepath, **kwargs)
-
-if __name__ == "__main__":
-    import sys
-    sys.exit(main())
 

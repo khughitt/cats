@@ -3,7 +3,7 @@ cats: cat for sequnce data
 """
 DOCLINES = __doc__.split("\n")
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 CLASSIFIERS = [
     'Development Status :: 3 - Alpha',
@@ -30,6 +30,7 @@ setup(
     maintainer="khughitt@umd.edu",
     maintainer_email="khughitt@umd.edu",
     name="cats",
+    packages=find_packages(),
     platforms=["Windows", "Linux", "Solaris", "Mac OS-X", "Unix"],
     provides=['cats'],
     py_modules=['cats'],
@@ -37,6 +38,6 @@ setup(
     use_2to3=True,
     version="0.1",
     entry_points={
-        'console_scripts': ['cats = cats:main']
+        'console_scripts': ['cats = cats.ui.cli:main']
     }
 )

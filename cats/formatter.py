@@ -1,27 +1,27 @@
 """
 cats - text formatting
 """
-def colorize(input_, **kwargs):
-    """Colorizes the target sequence"""
+def format(input_, color=True, line_width=80, **kwargs):
+    """Formats the target sequence"""
     import os
     import textwrap
     from Bio import SeqIO
     from Bio import Seq, SeqRecord
     from Bio.Alphabet import IUPAC
-
-    # Get default args
-    args = _defaults()
-    args.update(kwargs)
+    from cats.io.file import detect_format
+    from cats.colors.nucleic_acid import dna
+    from cats.colors.protein import amino_acid
 
     # Check input type
     if isinstance(input_, basestring):
         if os.path.isfile(input_):
-            # Read in FASTA file
-            seqs = SeqIO.parse(input_, 'fasta')
+            file_format = detect_format(input_)
+            seqs = SeqIO.parse(input_, file_format)
         else:
             # Sequence string?
             try:
-                seqs = [SeqRecord.SeqRecord(Seq.Seq(input_, IUPAC.IUPACUnambiguousDNA()))]
+                seqs = [SeqRecord.SeqRecord(
+                           Seq.Seq(input_, IUPAC.IUPACUnambiguousDNA()))]
             except:
                 raise UnrecognizedInput
 
@@ -31,53 +31,6 @@ def colorize(input_, **kwargs):
         seqs = [SeqRecord.SeqRecord(input_)]
     else:
         raise UnrecognizedInput
-
-    # Generate list of colors to use for printing, ex:
-    # regular    - \033[032m
-    # emphasized - \033[1;032m
-    # bright     - \033[092m
-    colors = ['\033[0%dm' % i for i in range(91, 95)]
-
-    # DNA
-    dna = dict((x, colors[i] + x) for i, x in enumerate(('A', 'C', 'G', 'T')))
-
-    # RNA
-
-    # Protein
-    # @TODO: Order by electronegativity?
-    amino_acid_colors = {
-        # Positively charged side chains (blue)
-        "R": 75,
-        "H": 69,
-        "K": 63,
-        # Negatively charged side chains (red)
-        "D": 168,
-        "E": 160,
-        # Polar uncharged side chains (purple)
-        "S": 189,
-        "T": 183,
-        "N": 177,
-        "Q": 171,
-        # Special cases (yellow)
-        "C": 190,
-        "U": 191,
-        "G": 192,
-        "P": 193,
-        # Hydrophobic side chains (green)
-        "A": 121,
-        "V": 120,
-        "I": 119,
-        "L": 118,
-        "M": 85,
-        "F": 84,
-        "Y": 83,
-        "W": 82,
-        "*": 255,
-        "-": 255
-    }
-
-    amino_acids = dict((k, '\033[38;05;%dm%s' % (v, k)) for 
-                       k, v in amino_acid_colors.items())
 
     # Use custom colors if specified
     config_file = os.path.expanduser("~/.catsrc")
@@ -90,7 +43,8 @@ def colorize(input_, **kwargs):
 
         # override color choices
         for k,v in config.items('dna'):
-            dna[k.upper()] = "\033%s%s" % (v, k.upper())
+            mod_color = "\033%s%s" % (v, k.upper())
+            dna[k.upper()] = mod_color
 
     # start/stop codons
     stop_template = '\033[0;041m\033[1;038m%s\033[0m'
@@ -106,7 +60,7 @@ def colorize(input_, **kwargs):
 
     # bold text
     reset = '\033[0m'
-    bold = '\033[1m'    
+    bold = '\033[1m'
 
     # For now only display amino acids when translate requested
     # @TODO: automatically detect/allow user to specify
@@ -152,13 +106,13 @@ def colorize(input_, **kwargs):
                     translated = str(reverse_comp.translate(
                         table=args['translation_table']
                     ))
-                
+
                 for i, residue in enumerate(translated, start=1):
-                     pretty += amino_acids[residue]
+                     pretty += amino_acid[residue]
                      # Add new lines to ensure desired line width
                      if i % args['line_width'] == 0:
                          pretty += "\n"
-                 
+
                 print(pretty)
     else:
         # Nuceotides
@@ -171,7 +125,7 @@ def colorize(input_, **kwargs):
         else:
             for seq in seqs:
                 print(bold + ">" + seq.description)
-                
+
                 # For DNA, read bases three at a time
                 # For now, assume reading frame starts from index 0
                 pretty = reset
@@ -179,7 +133,7 @@ def colorize(input_, **kwargs):
                     # If stop codon is encountered, highlight it
                     if args['stop_codons'] and str(codon) in stop_codons:
                         pretty += stop_codons[str(codon)]
-                    
+
                     # otherwise add colored bases
                     else:
                         for letter in codon:
@@ -187,7 +141,7 @@ def colorize(input_, **kwargs):
 
                 # Highlight CpG dinucleotides
                 if args['cpg']:
-                    pretty = pretty.replace(dna['C'] + dna['G'], 
+                    pretty = pretty.replace(dna['C'] + dna['G'],
                                             '\033[0;044m\033[1;038mCG\033[0m')
 
                 print(pretty)
@@ -196,3 +150,7 @@ def _chunks(seq, n):
     """Yield successive n-sized chunks from seq."""
     for i in range(0, len(seq), n):
         yield seq[i:i + n]
+
+class UnrecognizedInput(IOError):
+    """Unrecognized input error"""
+    pass
