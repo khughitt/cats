@@ -1,10 +1,11 @@
 """
 SeqRecord formatter.
 """
-Class SeqRecordFormatter(object):
+class SeqRecordFormatter(object):
     """Formatter for BioPython SeqRecord objects"""
     def __init__(self):
         """Creates a new SeqRecordFormatter instance"""
+        import os
         from cats.styles.nucleic_acid import dna
         from cats.styles.protein import amino_acid
 
@@ -28,7 +29,7 @@ Class SeqRecordFormatter(object):
 
             return
 
-    def format(self, seqs):
+    def format(self, seqs, **kwargs):
         """Format sequence records"""
         # start/stop codons
         stop_template = '\033[0;041m\033[1;038m%s\033[0m'
@@ -92,7 +93,7 @@ Class SeqRecordFormatter(object):
                         ))
 
                     for i, residue in enumerate(translated, start=1):
-                         pretty += amino_acid[residue]
+                         pretty += self.amino_acid[residue]
                          # Add new lines to ensure desired line width
                          if i % kwargs['line_width'] == 0:
                              pretty += "\n"
@@ -113,7 +114,7 @@ Class SeqRecordFormatter(object):
                     # For DNA, read bases three at a time
                     # For now, assume reading frame starts from index 0
                     pretty = reset
-                    for codon in _chunks(seq.seq, 3):
+                    for codon in self._chunks(seq.seq, 3):
                         # If stop codon is encountered, highlight it
                         if kwargs['stop_codons'] and str(codon) in stop_codons:
                             pretty += stop_codons[str(codon)]
@@ -121,16 +122,16 @@ Class SeqRecordFormatter(object):
                         # otherwise add colored bases
                         else:
                             for letter in codon:
-                                pretty += dna[letter]
+                                pretty += self.dna[letter]
 
                     # Highlight CpG dinucleotides
                     if kwargs['cpg']:
-                        pretty = pretty.replace(dna['C'] + dna['G'],
+                        pretty = pretty.replace(self.dna['C'] + self.dna['G'],
                                                 '\033[0;044m\033[1;038mCG\033[0m')
 
                     print(pretty)
 
-    def _chunks(seq, n):
+    def _chunks(self, seq, n):
         """Yield successive n-sized chunks from seq."""
         for i in range(0, len(seq), n):
             yield seq[i:i + n]

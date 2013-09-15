@@ -37,3 +37,7 @@ def format(input_, *args, **kwargs):
     else:
         raise UnrecognizedInput
 
+    # Default to SeqRecord formatter
+    formatter = cats.io.formatter.SeqRecordFormatter()
+    formatter.format(seqs, **kwargs)
+

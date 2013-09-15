@@ -16,7 +16,7 @@ def main():
     """Main"""
     import sys
     import os
-    from cats import formatter
+    import cats
 
     # If not arguments specified dispay help
     if (len(sys.argv) == 1) or ("-h" in sys.argv) or ("--help" in sys.argv):
@@ -35,7 +35,7 @@ def main():
     kwargs = _defaults()
     kwargs.update(args)
 
-    formatter.format(filepath, **kwargs)
+    cats.format(filepath, **kwargs)
 
 def _get_args():
     """Parses input and returns arguments"""
@@ -89,7 +89,8 @@ def _defaults():
 
 def _print_logo():
     """Print cats logo
-    Based on an ascii art version of nyan cat from an unknown source. 
+
+    Based on an ascii art version of nyan cat from an unknown source.
     """
     print("\n\033[38;05;196m`·.A,¸,.·A`·.,¸,.T··.\033[0m╭━━━━━╮\n"
           "\033[38;05;220m`·.T,¸,.·A`·.,¸,.T··.\033[0m|:::: /\_/\    "
