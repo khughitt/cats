@@ -57,48 +57,35 @@ class SeqRecordFormatter(object):
             # see: ftp://ftp.ncbi.nlm.nih.gov/entrez/misc/data/gc.prt
 
             # print without colors
-            if not kwargs['color']:
-                for seq in seqs:
-                    print(">" + seq.description)
-                    # forward frames
-                    if kwargs['translation_frame'] > 0:
-                        translated = str(seq.seq[frame:].translate(
-                            table=kwargs['translation_table'])
+            #print("\n".join(textwrap.wrap(translated, kwargs['line_width'])))
+            # Amino Acids
+            for seq in seqs:
+                pretty = reset
+
+                # Print description
+                if kwargs['color']:
+                    print(bold)
+
+                # Translate and add stylized residues to otput string
+                if kwargs['translation_frame'] > 0:
+                    translated = seq.seq[frame:].translate(
+                        table=kwargs['translation_table']
                     )
-                    # complemented frames
-                    else:
-                        reverse_comp = seq.seq.reverse_complement()[frame:]
-                        translated = str(reverse_comp.translate(
-                            table=kwargs['translation_table'])
-                        )
-                    print("\n".join(textwrap.wrap(translated, kwargs['line_width'])))
-            else:
-                # Amino Acids
-                for seq in seqs:
-                    pretty = reset
+                else:
+                    reverse_comp = seq.seq.reverse_complement()[frame:]
+                    translated = str(reverse_comp.translate(
+                        table=kwargs['translation_table']
+                    ))
 
-                    # Print description
-                    print(bold + ">" + seq.description)
-
-                    # print seq.seq[frame:]
-                    # Translate and add stylized residues to otput string
-                    if kwargs['translation_frame'] > 0:
-                        translated = seq.seq[frame:].translate(
-                            table=kwargs['translation_table']
-                        )
-                    else:
-                        reverse_comp = seq.seq.reverse_complement()[frame:]
-                        translated = str(reverse_comp.translate(
-                            table=kwargs['translation_table']
-                        ))
-
+                if kwargs['color']:
                     for i, residue in enumerate(translated, start=1):
                          pretty += self.amino_acid[residue]
                          # Add new lines to ensure desired line width
                          if i % kwargs['line_width'] == 0:
                              pretty += "\n"
-
                     print(pretty)
+                else:
+                    print("\n".join(textwrap.wrap(translated, kwargs['line_width'])))
         else:
             # Nuceotides
             # loop through and print seqs
