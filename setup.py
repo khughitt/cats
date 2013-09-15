@@ -33,7 +33,7 @@ setup(
     maintainer_email="khughitt@umd.edu",
     name="cats",
     packages=find_packages(),
-    platforms=["Windows", "Linux", "Solaris", "Mac OS-X", "Unix"],
+    platforms=["Linux", "Solaris", "Mac OS-X", "Unix"],
     provides=['cats'],
     url="https://github.com/khughitt/cats",
     use_2to3=True,
