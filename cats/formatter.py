@@ -9,8 +9,8 @@ def format(input_, color=True, line_width=80, **kwargs):
     from Bio import Seq, SeqRecord
     from Bio.Alphabet import IUPAC
     from cats.io.file import detect_format
-    from cats.colors.nucleic_acid import dna
-    from cats.colors.protein import amino_acid
+    from cats.styles.nucleic_acid import dna
+    from cats.styles.protein import amino_acid
 
     # Check input type
     if isinstance(input_, basestring):
