@@ -23,19 +23,19 @@ def main():
         _print_logo()
 
     # Check for input file
-    kwargs = _get_args()
+    args = _get_args()
 
-    filepath = os.path.expanduser(kwargs['file'])
+    filepath = os.path.expanduser(args['file'])
 
     if not os.path.isfile(filepath):
         print("No input specified")
         sys.exit()
 
     # Get default args
-    args = _defaults()
-    args.update(kwargs)
+    kwargs = _defaults()
+    kwargs.update(args)
 
-    formatter.format(filepath, args)
+    formatter.format(filepath, **kwargs)
 
 def _get_args():
     """Parses input and returns arguments"""
@@ -88,7 +88,9 @@ def _defaults():
     }
 
 def _print_logo():
-    """Print cats logo"""
+    """Print cats logo
+    Based on an ascii art version of nyan cat from an unknown source. 
+    """
     print("\n\033[38;05;196m`·.A,¸,.·A`·.,¸,.T··.\033[0m╭━━━━━╮\n"
           "\033[38;05;220m`·.T,¸,.·A`·.,¸,.T··.\033[0m|:::: /\_/\    "
           "\033[38;05;196mc\033[38;05;220ma\033[38;05;46mt\033[38;05;93ms\n"

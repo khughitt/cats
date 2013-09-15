@@ -1,7 +1,7 @@
 """
 cats - text formatting
 """
-def format(input_, color=True, line_width=80, **kwargs):
+def format(input_, *args, **kwargs):
     """Formats the target sequence"""
     import os
     import textwrap
@@ -64,29 +64,29 @@ def format(input_, color=True, line_width=80, **kwargs):
 
     # For now only display amino acids when translate requested
     # @TODO: automatically detect/allow user to specify
-    if args['translate']:
+    if kwargs['translate']:
         # determine frame to use
-        frame = abs(args['translation_frame']) - 1
+        frame = abs(kwargs['translation_frame']) - 1
 
         # select translation table
         # see: ftp://ftp.ncbi.nlm.nih.gov/entrez/misc/data/gc.prt
 
         # print without colors
-        if args['no_color']:
+        if not kwargs['color']:
             for seq in seqs:
                 print(">" + seq.description)
                 # forward frames
-                if args['translation_frame'] > 0:
+                if kwargs['translation_frame'] > 0:
                     translated = str(seq.seq[frame:].translate(
-                        table=args['translation_table'])
+                        table=kwargs['translation_table'])
                 )
                 # complemented frames
                 else:
                     reverse_comp = seq.seq.reverse_complement()[frame:]
                     translated = str(reverse_comp.translate(
-                        table=args['translation_table'])
+                        table=kwargs['translation_table'])
                     )
-                print("\n".join(textwrap.wrap(translated, args['line_width'])))
+                print("\n".join(textwrap.wrap(translated, kwargs['line_width'])))
         else:
             # Amino Acids
             for seq in seqs:
@@ -97,20 +97,20 @@ def format(input_, color=True, line_width=80, **kwargs):
 
                 # print seq.seq[frame:]
                 # Translate and add stylized residues to otput string
-                if args['translation_frame'] > 0:
+                if kwargs['translation_frame'] > 0:
                     translated = seq.seq[frame:].translate(
-                        table=args['translation_table']
+                        table=kwargs['translation_table']
                     )
                 else:
                     reverse_comp = seq.seq.reverse_complement()[frame:]
                     translated = str(reverse_comp.translate(
-                        table=args['translation_table']
+                        table=kwargs['translation_table']
                     ))
 
                 for i, residue in enumerate(translated, start=1):
                      pretty += amino_acid[residue]
                      # Add new lines to ensure desired line width
-                     if i % args['line_width'] == 0:
+                     if i % kwargs['line_width'] == 0:
                          pretty += "\n"
 
                 print(pretty)
@@ -118,7 +118,7 @@ def format(input_, color=True, line_width=80, **kwargs):
         # Nuceotides
         # loop through and print seqs
         # @NOTE - could pause here after each record if desired
-        if args['no_color']:
+        if not kwargs['color']:
             for seq in seqs:
                 print(">" + seq.description)
                 print(seq.seq)
@@ -131,7 +131,7 @@ def format(input_, color=True, line_width=80, **kwargs):
                 pretty = reset
                 for codon in _chunks(seq.seq, 3):
                     # If stop codon is encountered, highlight it
-                    if args['stop_codons'] and str(codon) in stop_codons:
+                    if kwargs['stop_codons'] and str(codon) in stop_codons:
                         pretty += stop_codons[str(codon)]
 
                     # otherwise add colored bases
@@ -140,7 +140,7 @@ def format(input_, color=True, line_width=80, **kwargs):
                             pretty += dna[letter]
 
                 # Highlight CpG dinucleotides
-                if args['cpg']:
+                if kwargs['cpg']:
                     pretty = pretty.replace(dna['C'] + dna['G'],
                                             '\033[0;044m\033[1;038mCG\033[0m')
 
