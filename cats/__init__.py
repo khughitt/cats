@@ -5,6 +5,7 @@ __version__ = 0.1
 
 import cats.styles
 import cats.io
+import cats.data
 
 def format(input_, *args, **kwargs):
     """Formats bioinformatics related data for display on the console."""
