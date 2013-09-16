@@ -6,122 +6,87 @@ class SeqRecordFormatter(object):
     def __init__(self):
         """Creates a new SeqRecordFormatter instance"""
         import os
-        from cats.styles.nucleic_acid import dna
+        import ConfigParser
+        from cats.styles.nucleic_acid import NucleicAcidFormatter
         from cats.styles.protein import amino_acid
-
-        # Store mappings
-        self.dna = dna
-        self.amino_acid = amino_acid
 
         # Use custom colors if specified
         config_file = os.path.expanduser("~/.catsrc")
 
+        # Load config file
+        config = ConfigParser.ConfigParser()
         if os.path.isfile(config_file):
-            # read config file
-            import ConfigParser
-            config = ConfigParser.ConfigParser()
             config.read(config_file)
 
-            # override color choices
-            for k,v in config.items('dna'):
-                mod_color = "\033%s%s" % (v, k.upper())
-                self.dna[k.upper()] = mod_color
+        dna_colors = {}
+        if config.has_section('dna'):
+            dna_colors = config.items('dna')
 
-            return
+        # Store mappings
+        self.amino_acid = amino_acid
+        self.dna_formtter = NucleicAcidFormatter(dna_colors)
 
     def format(self, seqs, **kwargs):
         """Format sequence records"""
-        # start/stop codons
-        stop_template = '\033[0;041m\033[1;038m%s\033[0m'
-
-        stop_codons = {
-            "TAG": stop_template % "TAG",
-            "TAA": stop_template % "TAA",
-            "TGA": stop_template % "TGA"
-        }
+        # output buffer
+        buffer = ""
 
         # for x in range(1,10):
         # print "\033[03%dmTEST   \033[09%dmTEST" % (x,x)
 
-        # bold text
-        reset = '\033[0m'
-        bold = '\033[1m'
+        # default/bold text
+        RESET = '\033[0m'
+        BOLD = '\033[1m'
 
         # For now only display amino acids when translate requested
         # @TODO: automatically detect/allow user to specify
-        if kwargs['translate']:
-            # determine frame to use
-            frame = abs(kwargs['translation_frame']) - 1
 
-            # select translation table
-            # see: ftp://ftp.ncbi.nlm.nih.gov/entrez/misc/data/gc.prt
+        # select translation table
+        # see: ftp://ftp.ncbi.nlm.nih.gov/entrez/misc/data/gc.prt
 
-            # print without colors
-            #print("\n".join(textwrap.wrap(translated, kwargs['line_width'])))
-            # Amino Acids
-            for seq in seqs:
-                pretty = reset
+        # Iterate through and format each sequence record
+        for x in seqs:
+            # Reset formatting
+            seq = RESET
 
-                # Print description
-                if kwargs['color']:
-                    print(bold)
+            # Print description
+            if kwargs['color']:
+                seq += BOLD
 
-                # Translate and add stylized residues to otput string
-                if kwargs['translation_frame'] > 0:
-                    translated = seq.seq[frame:].translate(
-                        table=kwargs['translation_table']
-                    )
-                else:
-                    reverse_comp = seq.seq.reverse_complement()[frame:]
-                    translated = str(reverse_comp.translate(
-                        table=kwargs['translation_table']
-                    ))
+            # Protein
+            if kwargs['translate']:
+                # determine frame to use
+                frame = abs(kwargs['translation_frame']) - 1
+                dna_str = x.seq[frame:]
 
+                if kwargs['translation_frame'] < 0:
+                    dna_str = x.seq.reverse_complement()[frame:]
+                translated = dna_str.translate(table=kwargs['translation_table'])
+
+                # format and append to output buffer
                 if kwargs['color']:
                     for i, residue in enumerate(translated, start=1):
-                         pretty += self.amino_acid[residue]
+                         seq += self.amino_acid[residue]
                          # Add new lines to ensure desired line width
                          if i % kwargs['line_width'] == 0:
-                             pretty += "\n"
-                    print(pretty)
+                             seq += "\n"
+                    print(seq)
                 else:
-                    print("\n".join(textwrap.wrap(translated, kwargs['line_width'])))
-        else:
-            # Nuceotides
-            # loop through and print seqs
-            # @NOTE - could pause here after each record if desired
-            if not kwargs['color']:
-                for seq in seqs:
-                    print(">" + seq.description)
-                    print(seq.seq)
+                    print("\n".join(textwrap.wrap(translated,
+                                                  kwargs['line_width'])))
+            # DNA
             else:
-                for seq in seqs:
-                    print(bold + ">" + seq.description)
+                if kwargs['color']:
+                    seq += self.dna_formatter.format_dna(x.seq,
+                                          kwargs['stop_codons'], kwargs['cpg'])
+                else:
+                    seq += x.seq
 
-                    # For DNA, read bases three at a time
-                    # For now, assume reading frame starts from index 0
-                    pretty = reset
-                    for codon in self._chunks(seq.seq, 3):
-                        # If stop codon is encountered, highlight it
-                        if kwargs['stop_codons'] and str(codon) in stop_codons:
-                            pretty += stop_codons[str(codon)]
+            # Append formatted sequence to output buffer
+            buffer += seq
 
-                        # otherwise add colored bases
-                        else:
-                            for letter in codon:
-                                pretty += self.dna[letter]
-
-                    # Highlight CpG dinucleotides
-                    if kwargs['cpg']:
-                        pretty = pretty.replace(self.dna['C'] + self.dna['G'],
-                                                '\033[0;044m\033[1;038mCG\033[0m')
-
-                    print(pretty)
-
-    def _chunks(self, seq, n):
-        """Yield successive n-sized chunks from seq."""
-        for i in range(0, len(seq), n):
-            yield seq[i:i + n]
+        # Return result
+        return buffer
 
 class UnrecognizedInput(IOError):
     """Unrecognized input error"""

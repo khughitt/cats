@@ -35,7 +35,7 @@ def main():
     kwargs = _defaults()
     kwargs.update(args)
 
-    cats.format(filepath, **kwargs)
+    print(cats.format(filepath, **kwargs))
 
 def _get_args():
     """Parses input and returns arguments"""

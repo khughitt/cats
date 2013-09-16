@@ -1,1 +1,1 @@
-from cats.styles import nucleic_acid,protein
+from cats.styles import sequence
