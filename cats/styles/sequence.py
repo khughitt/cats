@@ -3,7 +3,7 @@ Nucleic acid/protein sequence formatter
 """
 class SequenceFormatter(object):
     def __init__(self, custom_colors=None):
-        self._load_nucleic_acid_mapping()
+        self._load_nucleic_acid_mapping(custom_colors)
         self._load_amino_acid_mapping()
 
     def _load_nucleic_acid_mapping(self):

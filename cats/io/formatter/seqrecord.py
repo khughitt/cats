@@ -7,8 +7,7 @@ class SeqRecordFormatter(object):
         """Creates a new SeqRecordFormatter instance"""
         import os
         import ConfigParser
-        from cats.styles.nucleic_acid import NucleicAcidFormatter
-        from cats.styles.protein import amino_acid
+        from cats.styles.sequence import SequenceFormatter
 
         # Use custom colors if specified
         config_file = os.path.expanduser("~/.catsrc")
@@ -22,9 +21,8 @@ class SeqRecordFormatter(object):
         if config.has_section('dna'):
             dna_colors = config.items('dna')
 
-        # Store mappings
-        self.amino_acid = amino_acid
-        self.dna_formtter = NucleicAcidFormatter(dna_colors)
+        # Load sequence formatter
+        self.seq_formatter = SequenceFormatter(dna_colors)
 
     def format(self, seqs, **kwargs):
         """Format sequence records"""
@@ -55,6 +53,7 @@ class SeqRecordFormatter(object):
 
             # Protein
             if kwargs['translate']:
+
                 # determine frame to use
                 frame = abs(kwargs['translation_frame']) - 1
                 dna_str = x.seq[frame:]
@@ -65,20 +64,16 @@ class SeqRecordFormatter(object):
 
                 # format and append to output buffer
                 if kwargs['color']:
-                    for i, residue in enumerate(translated, start=1):
-                         seq += self.amino_acid[residue]
-                         # Add new lines to ensure desired line width
-                         if i % kwargs['line_width'] == 0:
-                             seq += "\n"
-                    print(seq)
+                    seq += self.seq_formatter.format_protein(translated,
+                                                          kwargs['line_width'])
                 else:
                     print("\n".join(textwrap.wrap(translated,
                                                   kwargs['line_width'])))
             # DNA
             else:
                 if kwargs['color']:
-                    seq += self.dna_formatter.format_dna(x.seq,
-                                          kwargs['stop_codons'], kwargs['cpg'])
+                    seq += self.seq_formatter.format_dna(x.seq,
+                                               kwargs['stop_codons'], kwargs['cpg'])
                 else:
                     seq += x.seq
 
