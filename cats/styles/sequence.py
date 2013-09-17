@@ -6,13 +6,12 @@ class SequenceFormatter(object):
         self._load_nucleic_acid_mapping(custom_colors)
         self._load_amino_acid_mapping()
 
-    def _load_nucleic_acid_mapping(self):
+    def _load_nucleic_acid_mapping(self, custom_colors):
         """Loads nucleic acid mapping"""
+        from cats.styles import colors
+
         # Generate list of colors to use for printing, ex:
-        # regular    - \033[032m
-        # emphasized - \033[1;032m
-        # bright     - \033[092m
-        dna_colors = ['\033[0%dm' % i for i in range(91, 95)]
+        dna_colors = [colors.RED, colors.GREEN, colors.BLUE, colors.MAGENTA]
 
         # DNA
         self.dna = dict((x, dna_colors[i] + x) for i, x in
@@ -76,17 +75,17 @@ class SequenceFormatter(object):
 
         # For DNA, read bases three at a time
         # For now, assume reading frame starts from index 0
-        for codon in _chunks(seq, 3):
+        for codon in self._chunks(seq, 3):
             # (Optional) If stop codon is encountered, highlight it
             if color_stop_codons and str(codon) in stop_codons:
                 output += stop_codons[str(codon)]
             else:
                 for letter in codon:
-                    output += dna[letter]
+                    output += self.dna[letter]
 
         # (Optional) Highlight CpG dinucleotides
         if color_cpg:
-            output = output.replace(dna['C'] + dna['G'], 
+            output = output.replace(self.dna['C'] + self.dna['G'], 
                                     '\033[0;044m\033[1;038mCG\033[0m')
 
         return output

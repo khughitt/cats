@@ -12,6 +12,7 @@ Contents
    Broad Institute Sample GFF3 file
    http://www.broadinstitute.org/annotation/gebo/help/gff3.html
 """
+import os
 import cats
 
 __author__ = "Keith Hughitt"

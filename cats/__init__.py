@@ -40,5 +40,5 @@ def format(input_, *args, **kwargs):
 
     # Default to SeqRecord formatter
     formatter = cats.io.formatter.SeqRecordFormatter()
-    formatter.format(seqs, **kwargs)
+    return formatter.format(seqs, **kwargs)
 

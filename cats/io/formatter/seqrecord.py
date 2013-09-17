@@ -43,42 +43,41 @@ class SeqRecordFormatter(object):
         # see: ftp://ftp.ncbi.nlm.nih.gov/entrez/misc/data/gc.prt
 
         # Iterate through and format each sequence record
-        for x in seqs:
+        for seq in seqs:
             # Reset formatting
-            seq = RESET
+            buffer += RESET
 
             # Print description
             if kwargs['color']:
-                seq += BOLD
+                buffer += BOLD
+
+            buffer += ">" + seq.description
 
             # Protein
             if kwargs['translate']:
 
                 # determine frame to use
                 frame = abs(kwargs['translation_frame']) - 1
-                dna_str = x.seq[frame:]
+                dna_str = seq.seq[frame:]
 
                 if kwargs['translation_frame'] < 0:
-                    dna_str = x.seq.reverse_complement()[frame:]
+                    dna_str = seq.seq.reverse_complement()[frame:]
                 translated = dna_str.translate(table=kwargs['translation_table'])
 
                 # format and append to output buffer
                 if kwargs['color']:
-                    seq += self.seq_formatter.format_protein(translated,
+                    buffer += self.seq_formatter.format_protein(translated,
                                                           kwargs['line_width'])
                 else:
-                    print("\n".join(textwrap.wrap(translated,
-                                                  kwargs['line_width'])))
+                    buffer += "\n".join(textwrap.wrap(translated,
+                                                      kwargs['line_width']))
             # DNA
             else:
                 if kwargs['color']:
-                    seq += self.seq_formatter.format_dna(x.seq,
-                                               kwargs['stop_codons'], kwargs['cpg'])
+                    buffer += self.seq_formatter.format_dna(seq.seq,
+                                          kwargs['stop_codons'], kwargs['cpg'])
                 else:
-                    seq += x.seq
-
-            # Append formatted sequence to output buffer
-            buffer += seq
+                    buffer += seq.seq
 
         # Return result
         return buffer

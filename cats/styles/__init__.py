@@ -1,1 +1,1 @@
-from cats.styles import sequence
+from cats.styles import colors,sequence
