@@ -51,7 +51,7 @@ class SeqRecordFormatter(object):
             if kwargs['color']:
                 buffer += BOLD
 
-            buffer += ">" + seq.description
+            buffer += ">" + seq.description + "\n"
 
             # Protein
             if kwargs['translate']:
