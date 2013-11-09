@@ -17,6 +17,7 @@ def main():
     import sys
     import os
     import cats
+    import pydoc
 
     # If not arguments specified dispay help
     if (len(sys.argv) == 1) or ("-h" in sys.argv) or ("--help" in sys.argv):
@@ -35,7 +36,8 @@ def main():
     kwargs = _defaults()
     kwargs.update(args)
 
-    print(cats.format(filepath, **kwargs))
+    output = cats.format(filepath, **kwargs)
+    pydoc.pipepager(output, cmd='less -R')
 
 def _get_args():
     """Parses input and returns arguments"""
