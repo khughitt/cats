@@ -53,6 +53,9 @@ class SeqRecordFormatter(object):
 
             buffer += ">" + seq.description + "\n"
 
+            # line width
+            width = kwargs['line_width']
+
             # Protein
             if kwargs['translate']:
 
@@ -68,21 +71,30 @@ class SeqRecordFormatter(object):
 
                 # format and append to output buffer
                 if kwargs['color']:
-                    buffer += self.seq_formatter.format_protein(translated,
-                                                          kwargs['line_width'])
+                    _seq = self._fill(translated, width)
+                    buffer += self.seq_formatter.format_protein(_seq)
                 else:
-                    buffer += "\n".join(textwrap.wrap(translated,
-                                                      kwargs['line_width']))
+                    buffer += self._fill(translated, width)
+
             # DNA
             else:
                 if kwargs['color']:
-                    buffer += self.seq_formatter.format_dna(seq.seq,
-                                          kwargs['stop_codons'], kwargs['cpg'])
+                    _seq = self._fill(str(seq.seq), width)
+                    buffer += self.seq_formatter.format_dna(_seq,
+                                                         kwargs['stop_codons'],
+                                                         kwargs['cpg'])
                 else:
-                    buffer += str(seq.seq)
+                    buffer += self._fill(str(seq.seq), width)
 
         # Return result
         return buffer
+
+    def _fill(self, text, width=70):
+        """
+        Faster text-wrapping for long strings
+        source: http://stackoverflow.com/questions/2657693/insert-a-newline-character-every-64-characters-using-python/2657733#2657733
+        """
+        return '\n'.join(text[i:i+width] for i in range(0, len(text), width))
 
 class UnrecognizedInput(IOError):
     """Unrecognized input error"""

@@ -16,6 +16,7 @@ class SequenceFormatter(object):
         # DNA
         self.dna = dict((x, dna_colors[i] + x) for i, x in
                          enumerate(('A', 'C', 'G', 'T')))
+        self.dna['\n'] = '\n'
 
         # Apply any custom color settings
         if custom_colors is not None:
@@ -68,6 +69,7 @@ class SequenceFormatter(object):
 
         self.amino_acid = dict((k, '\033[38;05;%dm%s' % (v, k)) for
                                    k, v in amino_acid_colors.items())
+        self.amino_acid['\n'] = '\n'
 
     def format_dna(self, seq, color_stop_codons=False, color_cpg=False):
         """Format a string of DNA nucleotides"""
@@ -86,15 +88,11 @@ class SequenceFormatter(object):
 
         return output
 
-    def format_protein(self, seq, line_width=80):
+    def format_protein(self, seq):
         """Formats a protein sequence"""
         output = ""
         for i, residue in enumerate(str(seq), start=1):
              output += self.amino_acid[residue]
-
-             # Add new lines to ensure desired line width
-             if i % line_width == 0:
-                 seq += "\n"
 
         return output
 

@@ -86,7 +86,7 @@ def _defaults():
         "translate": False,
         "translation_table": 1,
         "translation_frame": 1,
-        "line_width": 80
+        "line_width": 70
     }
 
 def _print_logo():
