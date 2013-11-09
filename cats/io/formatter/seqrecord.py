@@ -62,7 +62,9 @@ class SeqRecordFormatter(object):
 
                 if kwargs['translation_frame'] < 0:
                     dna_str = seq.seq.reverse_complement()[frame:]
-                translated = dna_str.translate(table=kwargs['translation_table'])
+
+                table = kwargs['translation_table']
+                translated = str(dna_str.translate(table=table))
 
                 # format and append to output buffer
                 if kwargs['color']:
@@ -77,7 +79,7 @@ class SeqRecordFormatter(object):
                     buffer += self.seq_formatter.format_dna(seq.seq,
                                           kwargs['stop_codons'], kwargs['cpg'])
                 else:
-                    buffer += seq.seq
+                    buffer += str(seq.seq)
 
         # Return result
         return buffer

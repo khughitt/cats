@@ -72,7 +72,7 @@ class SequenceFormatter(object):
     def format_dna(self, seq, color_stop_codons=False, color_cpg=False):
         """Format a string of DNA nucleotides"""
         # Colorize sequence
-        output = "".join([self.dna[letter] for letter in seq])
+        output = "".join([self.dna[letter] for letter in str(seq)])
 
         # (Optional) Highlight stop codons
         if color_stop_codons:
@@ -89,7 +89,7 @@ class SequenceFormatter(object):
     def format_protein(self, seq, line_width=80):
         """Formats a protein sequence"""
         output = ""
-        for i, residue in enumerate(seq, start=1):
+        for i, residue in enumerate(str(seq), start=1):
              output += self.amino_acid[residue]
 
              # Add new lines to ensure desired line width
