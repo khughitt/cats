@@ -71,17 +71,13 @@ class SequenceFormatter(object):
 
     def format_dna(self, seq, color_stop_codons=False, color_cpg=False):
         """Format a string of DNA nucleotides"""
-        output = ""
+        # Colorize sequence
+        output = "".join([self.dna[letter] for letter in seq])
 
-        # For DNA, read bases three at a time
-        # For now, assume reading frame starts from index 0
-        for codon in self._chunks(seq, 3):
-            # (Optional) If stop codon is encountered, highlight it
-            if color_stop_codons and str(codon) in stop_codons:
-                output += stop_codons[str(codon)]
-            else:
-                for letter in codon:
-                    output += self.dna[letter]
+        # (Optional) Highlight stop codons
+        if color_stop_codons:
+            for stop in ['TAG', 'TAA', 'TGA']:
+                output = output.replace("".join([self.dna[x] for x in stop]))
 
         # (Optional) Highlight CpG dinucleotides
         if color_cpg:
@@ -101,10 +97,4 @@ class SequenceFormatter(object):
                  seq += "\n"
 
         return output
-
-    def _chunks(self, seq, n):
-        """Yield successive n-sized chunks from seq."""
-        for i in range(0, len(seq), n):
-            yield seq[i:i + n]
-
 
