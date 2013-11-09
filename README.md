@@ -13,11 +13,11 @@ Installation
 ------------
 *pre-requisites*
 * [BioPython](http://biopython.org/wiki/Biopython)
+* [bcbio-gff](https://github.com/chapmanb/bcbb/tree/master/gff)
 
 *installation:*
 
     sudo python setup.py install
-
 
 Usage
 -----
