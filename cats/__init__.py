@@ -24,6 +24,10 @@ def format(input_, *args, **kwargs):
             # Sequence recoreds (e.g. FASTA)
             if (file_format in ['fasta']):
                 seqs = SeqIO.parse(input_, file_format)
+            # GFF
+            if (file_format is 'gff'):
+                formatter = cats.io.formatter.GFFFormatter()
+                return formatter.format(input_, **kwargs)
         else:
             # Sequence string?
             try:
