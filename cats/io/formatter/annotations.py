@@ -33,7 +33,8 @@ class GFFFormatter(object):
         for entry in GFF.parse(fp):
             for gene in entry.features:
                 #output += _gene % (gene.type, gene.id, len(gene.sub_features))
-                output += colors.BLUE + contents.readline()
+                output += colors.GREEN + colors.BOLD + contents.readline()
+                output += colors.RESET
                 for mrna in gene.sub_features:
                     #output += _mrna % (mrna.type, mrna.id, 
                     #                   len(mrna.sub_features))

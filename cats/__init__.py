@@ -27,7 +27,14 @@ def format(input_, *args, **kwargs):
             # GFF
             if (file_format is 'gff'):
                 formatter = cats.io.formatter.GFFFormatter()
-                return formatter.format(input_, **kwargs)
+
+                # Ignore GFFParser induced deprecation warnings
+                import warnings
+                from Bio import BiopythonDeprecationWarning
+                with warnings.catch_warnings():
+                    warnings.filterwarnings("ignore",
+                                          category=BiopythonDeprecationWarning)
+                    return formatter.format(input_, **kwargs)
         else:
             # Sequence string?
             try:
@@ -44,5 +51,6 @@ def format(input_, *args, **kwargs):
 
     # Default to SeqRecord formatter
     formatter = cats.io.formatter.SeqRecordFormatter()
+
     return formatter.format(seqs, **kwargs)
 
