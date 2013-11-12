@@ -31,10 +31,14 @@ class GFFFormatter(object):
 
         # Output file contents, using GFFParser to navigate hierarchy
         for entry in GFF.parse(fp):
-            for gene in entry.features:
+            for i, gene in enumerate(entry.features):
                 #output += _gene % (gene.type, gene.id, len(gene.sub_features))
-                output += colors.GREEN + colors.BOLD + contents.readline()
-                output += colors.RESET
+                if i % 2 == 0:
+                    output += colors.GREEN
+                else:
+                    output += colors.GREEN_DARK
+                output += contents.readline() + colors.RESET
+
                 for mrna in gene.sub_features:
                     #output += _mrna % (mrna.type, mrna.id, 
                     #                   len(mrna.sub_features))
