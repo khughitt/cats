@@ -11,30 +11,41 @@ class GFFFormatter(object):
         """Format and print GFF file contents"""
         from BCBio import GFF
         from cats.styles import colors
+        from io import StringIO
 
         fp = open(input_file)
 
-        # output buffer
-        buffer = ""
+        # string and output buffers
+        contents = StringIO()
+        output = ""
+
+        # Read contents of file into a string buffer
+        contents.write(fp.read())
+        contents.seek(0)
+        fp.seek(0)
 
         # Output templates
-        _gene = colors.BLUE + "[%s] %s (%d features)\n"
-        _mrna = colors.CYAN + "%s: %s (%d features)\n"
-        _feat = colors.RED + "%s %d - %d\n"
+        #_gene = colors.BLUE + "[%s] %s (%d features)\n"
+        #_mrna = colors.CYAN + "%s: %s (%d features)\n"
+        #_feat = colors.RED + "%s %d - %d\n"
 
-        # parse each entry in GFF file
+        # Output file contents, using GFFParser to navigate hierarchy
         for entry in GFF.parse(fp):
-            buffer += colors.BLUE_DARK + entry.id + "\n"
             for gene in entry.features:
-                buffer += _gene % (gene.type, gene.id, len(gene.sub_features))
+                #output += _gene % (gene.type, gene.id, len(gene.sub_features))
+                output += colors.BLUE + contents.readline()
                 for mrna in gene.sub_features:
-                    buffer += _mrna % (mrna.type, mrna.id, 
-                                       len(mrna.sub_features))
+                    #output += _mrna % (mrna.type, mrna.id, 
+                    #                   len(mrna.sub_features))
+                    output += colors.CYAN + contents.readline()
                     for feature in mrna.sub_features:
-                        loc = feature.location
-                        buffer += _feat % (feature.type, loc.start, loc.end)
+                        #loc = feature.location
+                        #output += _feat % (feature.type, loc.start, loc.end)
+                        output += colors.RED + contents.readline()
 
-        # close file handle
+        # close file and string handles
         fp.close()
+        contents.close()
 
-        return buffer
+        return output
+
