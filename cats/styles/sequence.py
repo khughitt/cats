@@ -11,11 +11,12 @@ class SequenceFormatter(object):
         from cats.styles import colors
 
         # Generate list of colors to use for printing, ex:
-        dna_colors = [colors.RED, colors.GREEN, colors.BLUE, colors.MAGENTA]
+        dna_colors = [colors.RED, colors.GREEN, colors.BLUE, colors.MAGENTA,
+                      colors.WHITE]
 
         # DNA
         self.dna = dict((x, dna_colors[i] + x) for i, x in
-                         enumerate(('A', 'C', 'G', 'T')))
+                         enumerate(('A', 'C', 'G', 'T', 'N')))
         self.dna['\n'] = '\n'
 
         # Apply any custom color settings
