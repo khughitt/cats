@@ -37,7 +37,12 @@ def main():
     kwargs.update(args)
 
     output = cats.format(filepath, **kwargs)
-    pydoc.pipepager(output, cmd='less -R')
+
+    # output pager
+    pager_cmd = 'less -R'
+    if (args['chop']):
+        pager_cmd += "S"
+    pydoc.pipepager(output, cmd=pager_cmd)
 
 def _get_args():
     """Parses input and returns arguments"""
@@ -56,6 +61,10 @@ def _get_args():
                         action='store_true',
                         help='Highlight CpG dinucleotides')
     parser.add_argument('file', help='File containing sequence data.')
+    parser.add_argument('-S', '--chop-long-lines', dest='chop', 
+                        action='store_true',
+                        help='Causes lines longer  than  the screen width ' +
+                        'to be chopped (truncated) rather than wrapped.')
     parser.add_argument('-t', '--translate', action='store_true',
                         help='Translate a nucleotide sequence to an ' +
                              'amino acid sequence.', dest='translate')
@@ -69,8 +78,8 @@ def _get_args():
                              'specified using 1, 2, 3, -1, -2, and -3. The ' + 
                              'default frame is 1 (first foward frame).')
     parser.add_argument('-w', '--line-width', type=int, metavar="WIDTH",
-                        help='Number of characters to limit lines to ' + 
-                             '(default: 80)', dest='line_width')
+                        help='Number of characters to limit sequence lines ' +
+                             'to (default: 70)', dest='line_width')
     args = parser.parse_args()
 
     # convert to a python dict and return without 
