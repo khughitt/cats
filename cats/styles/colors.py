@@ -1,9 +1,20 @@
 """Base text style definitions"""
+import re
+
 #
 # Bold and text reset switches
 #
 RESET = '\033[0m'
 BOLD  = '\033[1m'
+
+#
+# Grep highlight codes
+# (needs to be looked at more closely...)
+#
+GREP_HIGHLIGHT_START = '\x1b[1;32m\x1b[K'
+GREP_HIGHLIGHT_STOP  = '\x1b[m\x1b[K'
+GREP_HIGHLIGHT_RANGE = re.compile("%s([AGCT]*)%s" % (re.escape(GREP_HIGHLIGHT_START),
+                                                     re.escape(GREP_HIGHLIGHT_STOP)))
 
 #
 # Terminal colors

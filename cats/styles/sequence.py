@@ -1,6 +1,8 @@
 """
 Nucleic acid/protein sequence formatter
 """
+import re
+
 class SequenceFormatter(object):
     def __init__(self, custom_colors=None):
         self._load_nucleic_acid_mapping(custom_colors)
@@ -74,8 +76,23 @@ class SequenceFormatter(object):
 
     def format_dna(self, seq, color_stop_codons=False, color_cpg=False):
         """Format a string of DNA nucleotides"""
+        from cats.styles import colors
+
+        output = ""
+
+        # Check for pre-existing highlighting (e.g. grep)
+        #highlight_ranges = []
+
+        #for match in re.finditer(colors.GREP_HIGHLIGHT_RANGE, seq):
+        #    highlight_ranges.append((match.
+        for i, part in enumerate(re.split(colors.GREP_HIGHLIGHT_RANGE, str(seq))):
+            if i % 2 == 0:
+                output += "".join([self.dna[letter] for letter in part])
+            else:
+                output += '\033[38;05;227m%s\033[0m' % part
+
         # Colorize sequence
-        output = "".join([self.dna[letter] for letter in str(seq)])
+        #output = "".join([self.dna[letter] for letter in str(seq)])
 
         # (Optional) Highlight stop codons
         if color_stop_codons:
