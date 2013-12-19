@@ -19,6 +19,24 @@ def main():
     import cats
     import pydoc
 
+    # Get default args
+    kwargs = _defaults()
+
+    # Ugly work-around 2013/12/19
+    # Check for stdin and attempt to parse if it exists
+    # for now just assume it is sequence and cat out; eventually add support
+    # for other types of data
+
+    # @TODO Refactor
+    # @TODO Preserve grep-lighted characters?
+    # @TODO Create a RawFormatter class to parse raw sequence as it comes in
+    # and skip the BioPython conversion step?
+    if not sys.stdin.isatty():
+       stdin = [x.strip() for x in sys.stdin.readlines()]
+       kwargs['line_width'] = len(stdin[0])
+       print(cats.format("".join(stdin), **kwargs))
+       sys.exit()
+
     # If not arguments specified dispay help
     if (len(sys.argv) == 1) or ("-h" in sys.argv) or ("--help" in sys.argv):
         _print_logo()
@@ -32,8 +50,7 @@ def main():
         print("No input specified")
         sys.exit()
 
-    # Get default args
-    kwargs = _defaults()
+    # update default arguments with user-specified settings
     kwargs.update(args)
 
     output = cats.format(filepath, **kwargs)
@@ -93,6 +110,7 @@ def _defaults():
         "start_codons": False,
         "stop_codons": False,
         "translate": False,
+        "cpg": False,
         "translation_table": 1,
         "translation_frame": 1,
         "line_width": 70
