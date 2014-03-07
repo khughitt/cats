@@ -86,7 +86,7 @@ class SequenceFormatter(object):
         #for match in re.finditer(colors.GREP_HIGHLIGHT_RANGE, seq):
         #    highlight_ranges.append((match.
         for i, part in enumerate(re.split(colors.GREP_HIGHLIGHT_RANGE, str(seq))):
-            if i % 2 == 0:
+            if i % 2 == 0 and part != "":
                 output += "".join([self.dna[letter] for letter in part])
             else:
                 output += '\033[38;05;227m%s\033[0m' % part
