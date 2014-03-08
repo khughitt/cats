@@ -11,7 +11,7 @@ def detect_format(filepath):
         'gff': ['gff', 'gff3']
     }
 
-    ext = os.path.basename(filepath).split('.').pop()
+    ext = os.path.basename(filepath).split('.').pop().lower()
 
     # Check known extensions
     for file_format,file_extensions in mapping.items():

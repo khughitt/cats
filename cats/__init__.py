@@ -4,17 +4,17 @@ cats
 __version__ = 0.1
 
 import cats.styles
-import cats.io
 import cats.data
+import cats.formatters
 
 def format(input_, *args, **kwargs):
     """Formats bioinformatics related data for display on the console."""
     import os
-    import textwrap
+    from io import TextIOWrapper
     from Bio import SeqIO
     from Bio import Seq, SeqRecord
     from Bio.Alphabet import IUPAC
-    from cats.io.file import detect_format
+    from cats.files import detect_format
 
     # Check input type
     if isinstance(input_, basestring):
@@ -26,7 +26,7 @@ def format(input_, *args, **kwargs):
                 seqs = SeqIO.parse(input_, file_format)
             # GFF
             if (file_format is 'gff'):
-                formatter = cats.io.formatter.GFFFormatter()
+                formatter = cats.formatters.GFFFormatter()
 
                 # Ignore GFFParser induced deprecation warnings
                 import warnings
@@ -46,11 +46,15 @@ def format(input_, *args, **kwargs):
         seqs = [input_]
     elif isinstance(input_, Seq.Seq):
         seqs = [SeqRecord.SeqRecord(input_)]
+    elif isinstance(input_, TextIOWrapper):
+        # Input from STDIN
+        formatter = cats.formatters.FASTAFormatter()
+        return formatter.format(input_, **kwargs)
     else:
         raise UnrecognizedInput
 
     # Default to SeqRecord formatter
-    formatter = cats.io.formatter.SeqRecordFormatter()
+    #formatter = cats.formatters.SeqRecordFormatter()
 
     return formatter.format(seqs, **kwargs)
 

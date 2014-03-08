@@ -28,14 +28,9 @@ def main():
     # for other types of data
 
     # @TODO Refactor
-    # @TODO Preserve grep-lighted characters?
-    # @TODO Create a RawFormatter class to parse raw sequence as it comes in
-    # and skip the BioPython conversion step?
     if not sys.stdin.isatty():
-       stdin = [x.strip() for x in sys.stdin.readlines()]
-       kwargs['line_width'] = len(stdin[0])
-       print(cats.format("".join(stdin), **kwargs))
-       sys.exit()
+        stream_formatter = cats.format(sys.stdin, **kwargs)
+        sys.exit()
 
     # If not arguments specified dispay help
     if (len(sys.argv) == 1) or ("-h" in sys.argv) or ("--help" in sys.argv):
