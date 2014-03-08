@@ -89,12 +89,46 @@ class SeqRecordFormatter(object):
         # Return result
         return buffer
 
+    #def _fill(self, text, width=70):
+        #"""
+        #Faster text-wrapping for long strings
+        #source: http://stackoverflow.com/questions/2657693/insert-a-newline-character-every-64-characters-using-python/2657733#2657733
+        #"""
+        #return '\n'.join(text[i:i+width] for i in range(0, len(text), width))
+
     def _fill(self, text, width=70):
         """
-        Faster text-wrapping for long strings
-        source: http://stackoverflow.com/questions/2657693/insert-a-newline-character-every-64-characters-using-python/2657733#2657733
+        ANSI-intelligent text-wrapping.
         """
-        return '\n'.join(text[i:i+width] for i in range(0, len(text), width))
+        # convert string to an iterable
+        string = iter(text)
+
+        output = ''
+
+        for i, char in enumerate(string):
+            # ansi escape sequence
+            if char == '\x1b':
+                # find matching escape sequence
+                output += '\x1b'
+                next_char = next(string)
+                output += next_char
+
+                while next_char != "\x1b":
+                    next_char = next(string)
+                    output += next_char
+
+                # last two characters ([K)
+                output += next(string)
+                output += next(string)
+            else:
+                # otherwise add char and wrap at specified width
+                output += char
+                if i > 0 and i % width == 0:
+                    output += '\n'
+
+        # return wrapped string
+        return output
+
 
 class UnrecognizedInput(IOError):
     """Unrecognized input error"""
