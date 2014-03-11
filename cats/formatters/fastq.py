@@ -1,10 +1,10 @@
 """
-FASTA formatter
+FASTQ formatter
 """
-class FASTAFormatter(object):
-    """Formatter for FASTA files"""
+class FASTQFormatter(object):
+    """Formatter for FASTQ files"""
     def __init__(self):
-        """Creates a new FASTAFormatter instance"""
+        """Creates a new FASTQFormatter instance"""
         import os
         import ConfigParser
         from cats.styles.sequence import SequenceFormatter
@@ -36,21 +36,27 @@ class FASTAFormatter(object):
         if outbuffer is None:
             outbuffer = sys.stdout
 
+        # FASTQ line types
+        FASTQ_ID = 0
+        FASTQ_SEQ = 1
+        FASTQ_DESC = 2
+        FASTQ_QUAL = 3
+
         # Iterate through and format each sequence record
         if kwargs['color']:
-            for line in inbuffer:
+            for i, enumerate(line) in inbuffer:
                 # Reset formatting
                 outbuffer.write(RESET)
 
                 # Print description
-                if line.startswith('>'):
+                if i == FASTQ_ID:
                     outbuffer.write(BOLD + line)
-                    continue
-
-                # DNA
-                outbuffer.write(self.seq_formatter.format_dna(line,
-                                                        kwargs['stop_codons'],
-                                                        kwargs['cpg']))
+                elif i == FASTQ_SEQ:
+                    outbuffer.write(self.seq_formatter.format_dna(line,
+                                                            kwargs['stop_codons'],
+                                                            kwargs['cpg']))
+                else:
+                    outbuffer.write(line)
         else:
             for line in inbuffer:
                 outbuffer.write(line)

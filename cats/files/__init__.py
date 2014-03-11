@@ -8,6 +8,7 @@ def detect_format(filepath):
     # File extensions
     mapping = {
         'fasta': ['fa', 'fasta'],
+        'fastq': ['fastq', 'fastq,gz'],
         'gff': ['gff', 'gff3']
     }
 
