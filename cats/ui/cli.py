@@ -34,6 +34,8 @@ def main():
             sys.exit()
         except BrokenPipeError:
             sys.exit()
+        except KeyboardInterrupt:
+            sys.exit()
 
     # If not arguments specified dispay help
     if (len(sys.argv) == 1) or ("-h" in sys.argv) or ("--help" in sys.argv):
@@ -54,6 +56,8 @@ def main():
     try:
         output = cats.format(filepath, **kwargs)
     except BrokenPipeError:
+        sys.exit()
+    except KeyboardInterrupt:
         sys.exit()
 
     # output pager
