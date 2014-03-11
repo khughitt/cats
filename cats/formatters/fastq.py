@@ -44,14 +44,18 @@ class FASTQFormatter(object):
 
         # Iterate through and format each sequence record
         if kwargs['color']:
-            for i, enumerate(line) in inbuffer:
+            for i, line in enumerate(inbuffer):
                 # Reset formatting
                 outbuffer.write(RESET)
 
+                # Convert from byte-string if coming from gzip
+                if type(line) is bytes:
+                    line = line.decode('ascii')
+
                 # Print description
-                if i == FASTQ_ID:
+                if i % 4 == FASTQ_ID:
                     outbuffer.write(BOLD + line)
-                elif i == FASTQ_SEQ:
+                elif i % 4 == FASTQ_SEQ:
                     outbuffer.write(self.seq_formatter.format_dna(line,
                                                             kwargs['stop_codons'],
                                                             kwargs['cpg']))

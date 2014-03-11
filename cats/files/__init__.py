@@ -8,13 +8,17 @@ def detect_format(filepath):
     # File extensions
     mapping = {
         'fasta': ['fa', 'fasta'],
-        'fastq': ['fastq', 'fastq,gz'],
+        'fastq': ['fastq'],
         'gff': ['gff', 'gff3']
     }
 
     ext = os.path.basename(filepath).split('.').pop().lower()
 
-    # Check known extensions
+    # first check for .fastq.gz
+    if filepath.endswith('.fastq.gz'):
+        return 'fastq'
+
+    # next, check rest of known file types
     for file_format,file_extensions in mapping.items():
         if ext in file_extensions:
             return file_format

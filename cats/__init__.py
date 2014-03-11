@@ -29,12 +29,21 @@ def format(input_, *args, **kwargs):
                     formatter = cats.formatters.FASTAFormatter()
                     formatter.format(open(input_), **kwargs)
                     sys.exit()
-                    #return formatter.format(open(input_), **kwargs)
                 else:
                     # Otherwise use SeqRecord formatter
                     seqs = SeqIO.parse(input_, file_format)
                     formatter = cats.formatters.SeqRecordFormatter()
                     return formatter.format(seqs, **kwargs)
+            # FASTQ
+            if (file_format in ['fastq']):
+                formatter = cats.formatters.FASTQFormatter()
+                if input_.endswith('.gz'):
+                    import gzip
+                    fp = gzip.open(input_, 'rb')
+                else:
+                    fp = open(input_)
+                formatter.format(fp, **kwargs)
+                sys.exit()
             # GFF
             if (file_format is 'gff'):
                 formatter = cats.formatters.GFFFormatter()
