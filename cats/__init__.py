@@ -1,7 +1,7 @@
 """
 cats
 """
-__version__ = 0.1
+__version__ = 0.2
 
 import cats.styles
 import cats.data
@@ -10,6 +10,7 @@ import cats.formatters
 def format(input_, *args, **kwargs):
     """Formats bioinformatics related data for display on the console."""
     import os
+    import sys
     from io import TextIOWrapper
     from Bio import SeqIO
     from Bio import Seq, SeqRecord
@@ -21,9 +22,19 @@ def format(input_, *args, **kwargs):
         if os.path.isfile(input_):
             file_format = detect_format(input_)
 
-            # Sequence recoreds (e.g. FASTA)
+            # FASTA
             if (file_format in ['fasta']):
-                seqs = SeqIO.parse(input_, file_format)
+                # If not translating sequences, use faster FASTAFormatter
+                if(not kwargs['translate']):
+                    formatter = cats.formatters.FASTAFormatter()
+                    formatter.format(open(input_), **kwargs)
+                    sys.exit()
+                    #return formatter.format(open(input_), **kwargs)
+                else:
+                    # Otherwise use SeqRecord formatter
+                    seqs = SeqIO.parse(input_, file_format)
+                    formatter = cats.formatters.SeqRecordFormatter()
+                    return formatter.format(seqs, **kwargs)
             # GFF
             if (file_format is 'gff'):
                 formatter = cats.formatters.GFFFormatter()
@@ -36,25 +47,26 @@ def format(input_, *args, **kwargs):
                                           category=BiopythonDeprecationWarning)
                     return formatter.format(input_, **kwargs)
         else:
-            # Sequence string?
+            # Sequence string
             try:
                 seqs = [SeqRecord.SeqRecord(
                            Seq.Seq(input_, IUPAC.IUPACUnambiguousDNA()))]
+                formatter = cats.formatters.SeqRecordFormatter()
+                return formatter.format(seqs, **kwargs)
             except:
                 raise UnrecognizedInput
     elif isinstance(input_, SeqRecord.SeqRecord):
-        seqs = [input_]
+        # SeqRecord
+        formatter = cats.formatters.SeqRecordFormatter()
+        return formatter.format([input_], **kwargs)
     elif isinstance(input_, Seq.Seq):
-        seqs = [SeqRecord.SeqRecord(input_)]
+        # Seq
+        formatter = cats.formatters.SeqRecordFormatter()
+        return formatter.format([SeqRecord.SeqRecord(input_)], **kwargs)
     elif isinstance(input_, TextIOWrapper):
-        # Input from STDIN
+        # STDIN
         formatter = cats.formatters.FASTAFormatter()
         return formatter.format(input_, **kwargs)
     else:
         raise UnrecognizedInput
-
-    # Default to SeqRecord formatter
-    #formatter = cats.formatters.SeqRecordFormatter()
-
-    return formatter.format(seqs, **kwargs)
 

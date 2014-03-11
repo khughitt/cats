@@ -38,7 +38,7 @@ setup(
     provides=['cats'],
     url="https://github.com/khughitt/cats",
     use_2to3=True,
-    version="0.1",
+    version="0.2",
     entry_points={
         'console_scripts': ['cats = cats.ui.cli:main']
     }
