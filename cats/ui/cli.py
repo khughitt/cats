@@ -29,8 +29,11 @@ def main():
 
     # @TODO Refactor
     if not sys.stdin.isatty():
-        stream_formatter = cats.format(sys.stdin, **kwargs)
-        sys.exit()
+        try:
+            stream_formatter = cats.format(sys.stdin, **kwargs)
+            sys.exit()
+        except BrokenPipeError:
+            sys.exit()
 
     # If not arguments specified dispay help
     if (len(sys.argv) == 1) or ("-h" in sys.argv) or ("--help" in sys.argv):
@@ -48,13 +51,16 @@ def main():
     # update default arguments with user-specified settings
     kwargs.update(args)
 
-    output = cats.format(filepath, **kwargs)
+    try:
+        output = cats.format(filepath, **kwargs)
+    except BrokenPipeError:
+        sys.exit()
 
     # output pager
-    pager_cmd = 'less -R'
-    if (args['chop']):
-        pager_cmd += "S"
-    pydoc.pipepager(output, cmd=pager_cmd)
+    #pager_cmd = 'less -R'
+    #if (args['chop']):
+    #    pager_cmd += "S"
+    #pydoc.pipepager(output, cmd=pager_cmd)
 
 def _get_args():
     """Parses input and returns arguments"""
