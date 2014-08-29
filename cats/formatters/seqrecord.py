@@ -6,14 +6,14 @@ class SeqRecordFormatter(object):
     def __init__(self):
         """Creates a new SeqRecordFormatter instance"""
         import os
-        import ConfigParser
+        import configparser
         from cats.styles.sequence import SequenceFormatter
 
         # Use custom colors if specified
         config_file = os.path.expanduser("~/.catsrc")
 
         # Load config file
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         if os.path.isfile(config_file):
             config.read(config_file)
 

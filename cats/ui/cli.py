@@ -63,7 +63,7 @@ def main():
 
     # output results
     try:
-        if isinstance(output, types.StringTypes):
+        if isinstance(output, str):
             print(output)
         else:
             outbuffer = sys.stdout
@@ -123,7 +123,7 @@ def _get_args():
     args = parser.parse_args()
 
     # convert to a python dict and return without 
-    return dict((k, v) for k, v in vars(args).iteritems() if v is not None)
+    return dict((k, v) for k, v in list(vars(args).items()) if v is not None)
 
 def _defaults():
     """Returns a dictionary containing the default arguments to use during

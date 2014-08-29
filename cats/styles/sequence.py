@@ -71,7 +71,7 @@ class SequenceFormatter(object):
         }
 
         self.amino_acid = dict((k, '\033[38;05;%dm%s' % (v, k)) for
-                                   k, v in amino_acid_colors.items())
+                                   k, v in list(amino_acid_colors.items()))
         self.amino_acid['\n'] = '\n'
 
     def format_dna(self, seq, color_stop_codons=False, color_cpg=False):

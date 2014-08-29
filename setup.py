@@ -3,8 +3,6 @@ cats: cat for sequnce data
 """
 DOCLINES = __doc__.split("\n")
 
-from distribute_setup import use_setuptools
-use_setuptools()
 from setuptools import setup,find_packages
 
 CLASSIFIERS = [
@@ -37,8 +35,7 @@ setup(
     platforms=["Linux", "Solaris", "Mac OS-X", "Unix"],
     provides=['cats'],
     url="https://github.com/khughitt/cats",
-    use_2to3=True,
-    version="0.2",
+    version="0.3",
     entry_points={
         'console_scripts': ['cats = cats.ui.cli:main']
     }

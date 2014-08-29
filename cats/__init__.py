@@ -1,7 +1,7 @@
 """
 cats
 """
-__version__ = 0.2
+__version__ = 0.3
 
 import cats.styles
 import cats.data
@@ -25,7 +25,7 @@ def format(input_, *args, **kwargs):
     }
 
     # Check input type
-    if isinstance(input_, basestring):
+    if isinstance(input_, str):
         if os.path.isfile(input_):
             # Determine file type to use
             if 'format' not in kwargs:
@@ -33,7 +33,7 @@ def format(input_, *args, **kwargs):
             else:
                 file_format = kwargs['format']
 
-                if file_format not in supported_formats.keys():
+                if file_format not in list(supported_formats.keys()):
                     raise UnrecognizedInput("Unsupported file format")
 
             # Open file
@@ -66,7 +66,7 @@ def format(input_, *args, **kwargs):
             file_format = kwargs['format']
         else:
             # wrap with helper class allow us to guess the type
-            from util import Peeker
+            from .util import Peeker
             input_ = Peeker(input_)
             file_format = _guess_format(input_)
         fp = input_

@@ -12,7 +12,7 @@ def detect_format(filepath, supported_formats):
     ext = os.path.basename(filepath).split('.').pop().lower()
 
     # next, check rest of known file types
-    for file_format,file_extensions in supported_formats.items():
+    for file_format,file_extensions in list(supported_formats.items()):
         if ext in file_extensions:
             return file_format
 
