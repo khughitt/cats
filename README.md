@@ -35,7 +35,11 @@ Some more examples:
 
 You can also pipe the output into less to page through output:
 
-    cats sample.fasta | less -FRX
+    cats sample.fasta | less
+
+Or grep for an interesting feature and pipe the output into cats:
+
+    grep "AAUAA" input.fastq | cats | less
 
 TODO
 ----
@@ -45,7 +49,8 @@ TODO
 4. Built-in mechanism to display x lines at a time? (more/less style)
 5. Add option to print available colors
 6. Support for specifying offset when highlighting nt stop codons
-7. non-fasta input formats
-8. simpler customization (e.g. using integers for colors)
-9. Man page
+7. simpler customization (e.g. using integers for colors)
+8. Man page
+9. Fix GFF parsing and switch to parsing stdin directly instead of using
+   the GFF parse to avoid having to read entire file at once.
 

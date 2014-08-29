@@ -18,6 +18,7 @@ def main():
     import os
     import cats
     import pydoc
+    import types
 
     # Get default args
     kwargs = _defaults()
@@ -60,6 +61,20 @@ def main():
     except KeyboardInterrupt:
         sys.exit()
 
+    # output results
+    try:
+        if isinstance(output, types.StringTypes):
+            print(output)
+        else:
+            outbuffer = sys.stdout
+            for line in output:
+                outbuffer.write(line)
+        sys.exit()
+    except BrokenPipeError:
+        sys.exit()
+    except KeyboardInterrupt:
+        sys.exit()
+
     # output pager
     #pager_cmd = 'less -R'
     #if (args['chop']):
@@ -71,7 +86,7 @@ def _get_args():
     from argparse import ArgumentParser
 
     parser = ArgumentParser(description='Pretty-print sequence data')
-    parser.add_argument('f', '--format',
+    parser.add_argument('-f', '--format',
                         help=('Input file format. Will attempt to autodetect '
                               'format if none is specified.'))
     parser.add_argument('--no-color', dest='color', 
