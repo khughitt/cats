@@ -1,25 +1,18 @@
 """
 File input and output.
 """
-def detect_format(filepath):
+def detect_format(filepath, supported_formats):
     """A simple method for determining filetype"""
     import os
 
-    # File extensions
-    mapping = {
-        'fasta': ['fa', 'fasta'],
-        'fastq': ['fastq'],
-        'gff': ['gff', 'gff3']
-    }
-
     ext = os.path.basename(filepath).split('.').pop().lower()
 
-    # first check for .fastq.gz
-    if filepath.endswith('.fastq.gz'):
-        return 'fastq'
+    # Ignore gzip portion for now
+    if filepath.endswith('.gz'):
+        filepath.replace('.gz', '')
 
     # next, check rest of known file types
-    for file_format,file_extensions in mapping.items():
+    for file_format,file_extensions in supported_formats.items():
         if ext in file_extensions:
             return file_format
 

@@ -16,32 +16,48 @@ def format(input_, *args, **kwargs):
     from Bio import Seq, SeqRecord
     from Bio.Alphabet import IUPAC
     from cats.files import detect_format
+    
+    # Supported file formats
+    supported_formats = {
+        'fasta': ['fa', 'fasta'],
+        'fastq': ['fastq'],
+        'gff': ['gff', 'gtf', 'gff3']
+    }
 
     # Check input type
     if isinstance(input_, basestring):
         if os.path.isfile(input_):
-            file_format = detect_format(input_)
+            # Determine file type to use
+            if 'format' not in kwargs:
+                file_format = detect_format(input_, supported_formats)
+            else:
+                file_format = kwargs['format']
+
+                if file_format not in supported_formats.keys():
+                    raise UnrecognizedInput("Unsupported file format")
+
+            # Open file
+            if input_.endswith('.gz'):
+                import gzip
+                fp = gzip.open(input_, 'rb')
+            else:
+                fp = open(input_)
 
             # FASTA
             if (file_format in ['fasta']):
                 # If not translating sequences, use faster FASTAFormatter
                 if(not kwargs['translate']):
                     formatter = cats.formatters.FASTAFormatter()
-                    formatter.format(open(input_), **kwargs)
+                    formatter.format(fp, **kwargs)
                     sys.exit()
                 else:
                     # Otherwise use SeqRecord formatter
-                    seqs = SeqIO.parse(input_, file_format)
+                    seqs = SeqIO.parse(fp, file_format)
                     formatter = cats.formatters.SeqRecordFormatter()
                     return formatter.format(seqs, **kwargs)
             # FASTQ
             if (file_format in ['fastq']):
                 formatter = cats.formatters.FASTQFormatter()
-                if input_.endswith('.gz'):
-                    import gzip
-                    fp = gzip.open(input_, 'rb')
-                else:
-                    fp = open(input_)
                 formatter.format(fp, **kwargs)
                 sys.exit()
             # GFF
@@ -54,7 +70,7 @@ def format(input_, *args, **kwargs):
                 with warnings.catch_warnings():
                     warnings.filterwarnings("ignore",
                                           category=BiopythonDeprecationWarning)
-                    return formatter.format(input_, **kwargs)
+                    return formatter.format(fp, **kwargs)
         else:
             # Sequence string
             try:

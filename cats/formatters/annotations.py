@@ -7,22 +7,20 @@ class GFFFormatter(object):
         """Creates a new GFFFormater instance"""
         pass
 
-    def format(self, input_file, **kwargs):
+    def format(self, handler, **kwargs):
         """Format and print GFF file contents"""
         from BCBio import GFF
         from cats.styles import colors
         from io import StringIO
-
-        fp = open(input_file)
 
         # string and output buffers
         contents = StringIO()
         output = ""
 
         # Read contents of file into a string buffer
-        contents.write(fp.read())
+        contents.write(handler.read())
         contents.seek(0)
-        fp.seek(0)
+        handler.seek(0)
 
         # Output templates
         #_gene = colors.BLUE + "[%s] %s (%d features)\n"
@@ -30,7 +28,7 @@ class GFFFormatter(object):
         #_feat = colors.RED + "%s %d - %d\n"
 
         # Output file contents, using GFFParser to navigate hierarchy
-        for entry in GFF.parse(fp):
+        for entry in GFF.parse(handler):
             for i, gene in enumerate(entry.features):
                 #output += _gene % (gene.type, gene.id, len(gene.sub_features))
                 if i % 2 == 0:
@@ -49,7 +47,6 @@ class GFFFormatter(object):
                         output += colors.RED + contents.readline()
 
         # close file and string handles
-        fp.close()
         contents.close()
 
         return output

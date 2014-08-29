@@ -71,6 +71,9 @@ def _get_args():
     from argparse import ArgumentParser
 
     parser = ArgumentParser(description='Pretty-print sequence data')
+    parser.add_argument('f', '--format',
+                        help=('Input file format. Will attempt to autodetect '
+                              'format if none is specified.'))
     parser.add_argument('--no-color', dest='color', 
                         action='store_false')
     parser.add_argument('--start-codons', dest='start_codons',
