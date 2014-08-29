@@ -43,34 +43,6 @@ def format(input_, *args, **kwargs):
             else:
                 fp = open(input_)
 
-            # FASTA
-            if (file_format in ['fasta']):
-                # If not translating sequences, use faster FASTAFormatter
-                if(not kwargs['translate']):
-                    formatter = cats.formatters.FASTAFormatter()
-                    formatter.format(fp, **kwargs)
-                    sys.exit()
-                else:
-                    # Otherwise use SeqRecord formatter
-                    seqs = SeqIO.parse(fp, file_format)
-                    formatter = cats.formatters.SeqRecordFormatter()
-                    return formatter.format(seqs, **kwargs)
-            # FASTQ
-            if (file_format in ['fastq']):
-                formatter = cats.formatters.FASTQFormatter()
-                formatter.format(fp, **kwargs)
-                sys.exit()
-            # GFF
-            if (file_format is 'gff'):
-                formatter = cats.formatters.GFFFormatter()
-
-                # Ignore GFFParser induced deprecation warnings
-                import warnings
-                from Bio import BiopythonDeprecationWarning
-                with warnings.catch_warnings():
-                    warnings.filterwarnings("ignore",
-                                          category=BiopythonDeprecationWarning)
-                    return formatter.format(fp, **kwargs)
         else:
             # Sequence string
             try:
@@ -90,8 +62,65 @@ def format(input_, *args, **kwargs):
         return formatter.format([SeqRecord.SeqRecord(input_)], **kwargs)
     elif isinstance(input_, TextIOWrapper):
         # STDIN
-        formatter = cats.formatters.FASTAFormatter()
-        return formatter.format(input_, **kwargs)
+        if 'format' in kwargs:
+            file_format = kwargs['format']
+        else:
+            # wrap with helper class allow us to guess the type
+            from util import Peeker
+            input_ = Peeker(input_)
+            file_format = _guess_format(input_)
+        fp = input_
     else:
         raise UnrecognizedInput
 
+    # FASTA
+    if (file_format in ['fasta']):
+        # If not translating sequences, use faster FASTAFormatter
+        if(not kwargs['translate']):
+            formatter = cats.formatters.FASTAFormatter()
+            formatter.format(fp, **kwargs)
+            sys.exit()
+        else:
+            # Otherwise use SeqRecord formatter
+            seqs = SeqIO.parse(fp, file_format)
+            formatter = cats.formatters.SeqRecordFormatter()
+            return formatter.format(seqs, **kwargs)
+    # FASTQ
+    if (file_format in ['fastq']):
+        formatter = cats.formatters.FASTQFormatter()
+        formatter.format(fp, **kwargs)
+        sys.exit()
+    # GFF
+    if (file_format is 'gff'):
+        formatter = cats.formatters.GFFFormatter()
+
+        # Ignore GFFParser induced deprecation warnings
+        import warnings
+        from Bio import BiopythonDeprecationWarning
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore",
+                                    category=BiopythonDeprecationWarning)
+            return formatter.format(fp, **kwargs)
+
+def _guess_format(handler):
+    """
+    Attempts to guess the input stream type from some common formats.
+    
+    This is very basic at the moment and will need to be improved as more
+    varied formats are encountered.
+    """
+    # Grab few first lines
+    lines = [handler.peekline() for x in range(3)]
+
+    # FASTQ
+    if lines[0].startswith("@"):
+        format = "fastq"
+    elif lines[0].startswith(">"):
+        format = "fasta"
+    elif lines[0].startswith("##gff"):
+        format = "gff"
+    else:
+        raise UnrecognizedInput
+
+    return format
+    
