@@ -21,6 +21,15 @@ class GFFFormatter(object):
         contents.write(handler.read())
         contents.seek(0)
         handler.seek(0)
+        
+        # First print any commments
+        last_loc = 0
+        line = contents.readline()
+        while line.startswith("#"):
+            output += colors.WHITE + line
+            last_loc = contents.tell()
+            line = contents.readline()
+        fp.seek(last_loc)
 
         # Output templates
         #_gene = colors.BLUE + "[%s] %s (%d features)\n"

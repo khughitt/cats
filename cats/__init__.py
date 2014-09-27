@@ -73,6 +73,12 @@ def format(input_, *args, **kwargs):
     else:
         raise UnrecognizedInput
 
+    # Sequence string
+    if (file_format in ['nucleic_acid_string', 'amino_acid_string']):
+        formatter = cats.formatters.SeqStringFormatter()
+        formatter.format(fp, **kwargs)
+        sys.exit()
+
     # FASTA
     if (file_format in ['fasta']):
         # If not translating sequences, use faster FASTAFormatter
@@ -109,6 +115,7 @@ def _guess_format(handler):
     This is very basic at the moment and will need to be improved as more
     varied formats are encountered.
     """
+
     # Grab few first lines
     lines = [handler.peekline() for x in range(3)]
 
@@ -120,7 +127,20 @@ def _guess_format(handler):
     elif lines[0].startswith("##gff"):
         format = "gff"
     else:
-        raise UnrecognizedInput
+        import re
+        from cats.styles.colors import GREP_HIGHLIGHT_START,GREP_HIGHLIGHT_STOP
+
+        # escape any byte characters resulting from grep
+        escaped = re.sub(GREP_HIGHLIGHT_STOP, '',
+                         re.sub(GREP_HIGHLIGHT_START, '', lines[0])).strip()
+
+        # check to see if it is a simple sequence string
+        if set(escaped).issubset(set('AGCTURY')):
+            format = 'nucleic_acid_string'
+        elif set(escaped).issubset(set('ARNDCQEGHILKMFPSTWYV*')):
+            format = 'amino_acid_string'
+        else:
+            raise UnrecognizedInput
 
     return format
     
