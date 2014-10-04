@@ -39,7 +39,11 @@ You can also pipe the output into less to page through output:
 
 Or grep for an interesting feature and pipe the output into cats:
 
-    grep "AAUAA" input.fastq | cats | less
+    grep --color='always' "AAUAA" input.fastq | cats
+
+Gzipped files are also supported:
+
+    zgrep --color='always' "AAAAA$" input.fastq.gz | cats
 
 TODO
 ----
