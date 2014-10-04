@@ -89,7 +89,8 @@ class SequenceFormatter(object):
             if i % 2 == 0:
                 output += "".join([self.dna[letter] for letter in part])
             else:
-                output += '\033[38;05;227m%s\033[0m' % part
+                #output += '\033[38;05;227m%s\033[0m' % part
+                output += colors.YELLOW + part + colors.RESET
 
         # Colorize sequence
         #output = "".join([self.dna[letter] for letter in str(seq)])
