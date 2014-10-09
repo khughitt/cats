@@ -17,6 +17,10 @@ GREP_HIGHLIGHT_STOP  = re.escape('\x1b[m\x1b[K')
 GREP_HIGHLIGHT_RANGE = re.compile("%s([AGCTU\n]*)%s" % (GREP_HIGHLIGHT_START,
                                                       GREP_HIGHLIGHT_STOP))
 
+#GREP_HIGHLIGHT_START = '\\\x1b\\[1\\;32m\n?(\\\x1b)?\n?(\\[K)?'
+#GREP_HIGHLIGHT_STOP = '\\\x1b\\[(00)?m\\\x1b\\[K'
+
+
 #
 # Terminal colors
 #

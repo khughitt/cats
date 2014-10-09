@@ -57,4 +57,8 @@ TODO
 8. Man page
 9. Fix GFF parsing and switch to parsing stdin directly instead of using
    the GFF parse to avoid having to read entire file at once.
+10. Add color themes modelled after popular software/conventions.
+11. Add unit tests to cover types of input, output, etc. (use a set color theme
+    to ensure consistency between test runs)
+12. Add option to show quality scores as a color bar (e.g. red => green)
 

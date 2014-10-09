@@ -16,5 +16,4 @@ def detect_format(filepath, supported_formats):
         if ext in file_extensions:
             return file_format
 
-    # Otherwise raise an exception
-    raise UnrecognizedInput("Unsupported file format")
+    return None

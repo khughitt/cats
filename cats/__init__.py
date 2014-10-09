@@ -27,21 +27,28 @@ def format(input_, *args, **kwargs):
     # Check input type
     if isinstance(input_, str):
         if os.path.isfile(input_):
-            # Determine file type to use
-            if 'format' not in kwargs:
-                file_format = detect_format(input_, supported_formats)
-            else:
-                file_format = kwargs['format']
-
-                if file_format not in list(supported_formats.keys()):
-                    raise UnrecognizedInput("Unsupported file format")
-
             # Open file
             if input_.endswith('.gz'):
                 import gzip
                 fp = gzip.open(input_, 'rb')
             else:
                 fp = open(input_)
+
+            # Determine file type to use
+            if 'format' not in kwargs:
+                file_format = detect_format(input_, supported_formats)
+
+                # if file extension is not recognized, attempt to guess format
+                if file_format is None:
+                    # wrap with helper class allow us to guess the type
+                    from .util import Peeker
+                    fp = Peeker(fp)
+                    file_format = _guess_format(fp)
+            else:
+                file_format = kwargs['format']
+
+                if file_format not in list(supported_formats.keys()):
+                    raise UnrecognizedInput("Unsupported file format")
 
         else:
             # Sequence string
@@ -135,6 +142,22 @@ def _guess_format(handler):
                          re.sub(GREP_HIGHLIGHT_START, '', lines[0])).strip()
 
         # check to see if it is a simple sequence string
+
+        # DEBUGGING
+        # zgrep -e
+        #In [2]: x = fp.read()
+
+        #In [3]: set(x)
+        #Out[3]: {'\n', '\x1b', '0', '1', '2', '3', ';', 'A', 'C', 'G', 'K', 'T', '[', 'm'}
+
+        # grep
+        #In [4]: fp2 = open('/home/keith/test.grep')
+
+        #In [5]: x2 = fp2.read()
+
+        #In [6]: set(x2)
+        #Out[6]: {'\n', '\x1b', '1', '2', '3', ';', 'A', 'C', 'G', 'K', 'T', '[', 'm
+
         if set(escaped).issubset(set('AGCTURY')):
             format = 'nucleic_acid_string'
         elif set(escaped).issubset(set('ARNDCQEGHILKMFPSTWYV*')):
