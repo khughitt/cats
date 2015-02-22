@@ -132,7 +132,7 @@ def _guess_format(handler):
     elif lines[0].startswith(">"):
         format = "fasta"
     elif lines[0].startswith("##gff"):
-        format = "gff"
+        format.co= "gff"
     else:
         import re
         from cats.styles.colors import GREP_HIGHLIGHT_START,GREP_HIGHLIGHT_STOP
@@ -163,6 +163,14 @@ def _guess_format(handler):
         elif set(escaped).issubset(set('ARNDCQEGHILKMFPSTWYV*')):
             format = 'amino_acid_string'
         else:
+            print("UNRECOGNIZED INPUT:")
+            print(set(escaped))
+            print(str(set(escaped)))
+            fp = open('error.out', 'w')
+            fp.writelines(lines)
+
+            fp = open('error_escaped.out', 'w')
+            fp.writelines(escaped)
             raise UnrecognizedInput
 
     return format

@@ -12,7 +12,8 @@ BOLD  = '\033[1m'
 # (needs to be looked at more closely...)
 #
 #GREP_HIGHLIGHT_START = re.escape('\x1b[1;32m') + '\n?' + re.escape('\x1b') + '\n?\\[K'
-GREP_HIGHLIGHT_START = '\\\x1b\\[1\\;32m\n?\\\x1b\n?\\[K'
+#GREP_HIGHLIGHT_START = '\\\x1b\\[1\\;32m\n?\\\x1b\n?\\[K'
+GREP_HIGHLIGHT_START = '\\\x1b\\[0?1\\;3[1-2]m\n?\\\x1b\n?\\[K'
 GREP_HIGHLIGHT_STOP  = re.escape('\x1b[m\x1b[K')
 GREP_HIGHLIGHT_RANGE = re.compile("%s([AGCTU\n]*)%s" % (GREP_HIGHLIGHT_START,
                                                       GREP_HIGHLIGHT_STOP))
