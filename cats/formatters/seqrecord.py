@@ -9,20 +9,8 @@ class SeqRecordFormatter(object):
         import configparser
         from cats.styles.sequence import SequenceFormatter
 
-        # Use custom colors if specified
-        config_file = os.path.expanduser("~/.catsrc")
-
-        # Load config file
-        config = configparser.ConfigParser()
-        if os.path.isfile(config_file):
-            config.read(config_file)
-
-        dna_colors = {}
-        if config.has_section('dna'):
-            dna_colors = config.items('dna')
-
         # Load sequence formatter
-        self.seq_formatter = SequenceFormatter(dna_colors)
+        self.seq_formatter = SequenceFormatter()
 
     def format(self, seqs, **kwargs):
         """Format sequence records"""

@@ -2,30 +2,35 @@
 Nucleic acid/protein sequence formatter
 """
 import re
+import sys
 
 class SequenceFormatter(object):
-    def __init__(self, custom_colors=None):
-        self._load_nucleic_acid_mapping(custom_colors)
+    def __init__(self, theme='default'):
+        # load theme
+        theme_module = 'cats.styles.themes.%s' % theme
+        __import__(theme_module)
+        self._theme = sys.modules[theme_module]
+
+        self._load_nucleic_acid_mapping()
         self._load_amino_acid_mapping()
 
-    def _load_nucleic_acid_mapping(self, custom_colors):
+    def _load_nucleic_acid_mapping(self):
         """Loads nucleic acid mapping"""
         from cats.styles import colors
 
         # Generate list of colors to use for printing, ex:
-        dna_colors = [colors.RED, colors.GREEN, colors.BLUE, colors.MAGENTA,
-                      colors.WHITE]
+        # if config // use_system_colors:
+        #dna_colors = [colors.RED, colors.GREEN, colors.BLUE, colors.MAGENTA,
+        #              colors.WHITE]
 
         # DNA
-        self.dna = dict((x, dna_colors[i] + x) for i, x in
-                         enumerate(('A', 'C', 'G', 'T', 'N')))
-        self.dna['\n'] = '\n'
+        #self.dna = dict((x, dna_colors[i] + x) for i, x in
+        #                 enumerate(('A', 'C', 'G', 'T', 'N')))
+        #self.dna['\n'] = '\n'
 
-        # Apply any custom color settings
-        if custom_colors is not None:
-            for k,v in custom_colors:
-                mod_color = "\033%s%s" % (v, k.upper())
-                self.dna[k.upper()] = mod_color
+        self.dna = dict((k, '\033[38;05;%dm%s' % (v, k)) for
+                            k, v in list(self._theme.nucleic_acids.items()))
+        self.dna['\n'] = '\n'
 
         # start/stop codons
         stop_template = '\033[0;041m\033[1;038m%s\033[0m'
@@ -90,7 +95,7 @@ class SequenceFormatter(object):
                 output += "".join([self.dna[letter] for letter in part])
             else:
                 #output += '\033[38;05;227m%s\033[0m' % part
-                output += colors.YELLOW + part + colors.RESET
+                output += self._theme.GREP_HIGHLIGHT_COLOR + part + colors.RESET
 
         # Colorize sequence
         #output = "".join([self.dna[letter] for letter in str(seq)])

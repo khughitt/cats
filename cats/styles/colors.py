@@ -51,3 +51,4 @@ CYAN_DARK    = _DARK  % 6
 CYAN         = _LIGHT % 6
 LIGHTGREY    = _DARK  % 7
 WHITE        = _LIGHT % 7
+
