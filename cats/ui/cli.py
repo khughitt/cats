@@ -6,11 +6,13 @@ cats: cat for sequence data
 Keith Hughitt <khughitt@umd.edu>
 
 TODO:
-    *support for piping colored output into head/tail
-    *support for specifying input file format
-    *generalizing highlight support (can keep --cpg, etc as convenience methods
+    * convert to class?
+    * support for piping colored output into head/tail
+    * support for specifying input file format
+    * set default arguments in format so that cats can be used as a library
+    * generalizing highlight support (can keep --cpg, etc as convenience methods
      which use the highlight functionality)
-    *alternate color schemes (e.g. http://www.ugr.es/~proyecto08173/qbiofisica/PROGRAMAS%20DE%20ORDENADOR/Analisis%20grafico%20de%20macromoleculas%20-%20Rastop%202.2/help/colour.htm)
+    * alternate color schemes (e.g. http://www.ugr.es/~proyecto08173/qbiofisica/PROGRAMAS%20DE%20ORDENADOR/Analisis%20grafico%20de%20macromoleculas%20-%20Rastop%202.2/help/colour.htm)
 """
 def main():
     """Main"""
@@ -21,20 +23,16 @@ def main():
     import types
 
     # Get default args
-    kwargs = _get_default_args()
+    kwargs = cats._load_config(entry_point='cli')
 
     # update default arguments with user-specified settings
-    args = _get_args()
+    parser = _get_args()
+
+    # convert to a python dict and return without 
+    args = parser.parse_args()
+    args = dict((k, v) for k, v in list(vars(args).items()) if v is not None)
+
     kwargs.update(args)
-
-    # load config
-    config = _load_config()
-    kwargs.update(config)
-
-    # Ugly work-around 2013/12/19
-    # Check for stdin and attempt to parse if it exists
-    # for now just assume it is sequence and cat out; eventually add support
-    # for other types of data
 
     # @TODO Refactor
     if not sys.stdin.isatty():
@@ -49,6 +47,8 @@ def main():
     # If not arguments specified dispay help
     if (len(sys.argv) == 1) or ("-h" in sys.argv) or ("--help" in sys.argv):
         _print_logo()
+        parser.print_help()
+        sys.exit()
 
     # Check for input file
     filepath = os.path.expanduser(args['file'])
@@ -103,7 +103,8 @@ def _get_args():
     parser.add_argument('--cpg', dest='cpg',
                         action='store_true',
                         help='Highlight CpG dinucleotides')
-    parser.add_argument('file', help='File containing sequence data.')
+    parser.add_argument('file', help='File containing sequence data.',
+                        nargs='?')
     parser.add_argument('-S', '--chop-long-lines', dest='chop', 
                         action='store_true',
                         help='Causes lines longer  than  the screen width ' +
@@ -123,49 +124,8 @@ def _get_args():
     parser.add_argument('-w', '--line-width', type=int, metavar="WIDTH",
                         help='Number of characters to limit sequence lines ' +
                              'to (default: 70)', dest='line_width')
-    args = parser.parse_args()
 
-    # convert to a python dict and return without 
-    return dict((k, v) for k, v in list(vars(args).items()) if v is not None)
-
-def _load_config():
-    """Loads user configuration if one exists"""
-    import os
-    import configparser
-
-    # Default configuration options
-    config = _get_default_config()
-
-    # Load config file if it exists
-    config_file = os.path.expanduser("~/.catsrc")
-
-    if os.path.isfile(config_file):
-        parser = configparser.ConfigParser()
-        parser.read(config_file)
-
-        config.update(dict(parser['general']))
-
-    return config
-
-def _get_default_args():
-    """Returns a dictionary containing the default arguments to use during
-    colorization."""
-    return {
-        "color": True,
-        "start_codons": False,
-        "stop_codons": False,
-        "translate": False,
-        "cpg": False,
-        "translation_table": 1,
-        "translation_frame": 1,
-        "line_width": 70
-    }
-
-def _get_default_config():
-    """Returns a dictionary containing the default config file settings"""
-    return {
-        "theme": "default"
-    }
+    return parser
 
 def _print_logo():
     """Print cats logo

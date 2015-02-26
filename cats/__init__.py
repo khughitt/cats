@@ -17,6 +17,10 @@ def format(input_, *args, **kwargs):
     from Bio.Alphabet import IUPAC
     from cats.files import detect_format
 
+    # Load config
+    if '_config_loaded' not in kwargs:
+        kwargs = _load_config()
+
     # Theme to use
     theme = kwargs['theme']
     
@@ -87,7 +91,8 @@ def format(input_, *args, **kwargs):
     if (file_format in ['nucleic_acid_string', 'amino_acid_string']):
         formatter = cats.formatters.SeqStringFormatter(theme)
         formatter.format(fp, **kwargs)
-        sys.exit()
+        if kwargs['_entry_point'] == 'cli':
+            sys.exit()
 
     # FASTA
     if (file_format in ['fasta']):
@@ -95,7 +100,8 @@ def format(input_, *args, **kwargs):
         if(not kwargs['translate']):
             formatter = cats.formatters.FASTAFormatter(theme)
             formatter.format(fp, **kwargs)
-            sys.exit()
+            if kwargs['_entry_point'] == 'cli':
+                sys.exit()
         else:
             # Otherwise use SeqRecord formatter
             seqs = SeqIO.parse(fp, file_format)
@@ -105,7 +111,8 @@ def format(input_, *args, **kwargs):
     if (file_format in ['fastq']):
         formatter = cats.formatters.FASTQFormatter(theme)
         formatter.format(fp, **kwargs)
-        sys.exit()
+        if kwargs['_entry_point'] == 'cli':
+            sys.exit()
     # GFF
     if (file_format is 'gff'):
         formatter = cats.formatters.GFFFormatter(theme)
@@ -166,15 +173,51 @@ def _guess_format(handler):
         elif set(escaped).issubset(set('ARNDCQEGHILKMFPSTWYV*')):
             format = 'amino_acid_string'
         else:
-            print("UNRECOGNIZED INPUT:")
-            print(set(escaped))
-            print(str(set(escaped)))
-            fp = open('error.out', 'w')
-            fp.writelines(lines)
+            print("Unrecognized Input:")
+            #print(set(escaped))
+            #print(str(set(escaped)))
+            #fp = open('error.out', 'w')
+            #fp.writelines(lines)
 
-            fp = open('error_escaped.out', 'w')
-            fp.writelines(escaped)
+            #fp = open('error_escaped.out', 'w')
+            #fp.writelines(escaped)
             raise UnrecognizedInput
 
     return format
-    
+
+def _load_config(entry_point='library'):
+    """Loads user configuration if one exists"""
+    import os
+    import configparser
+
+    # Default configuration options
+    config = _defaults()
+    config['_entry_point'] = entry_point
+
+    # Load config file if it exists
+    config_file = os.path.expanduser("~/.catsrc")
+
+    if os.path.isfile(config_file):
+        parser = configparser.ConfigParser()
+        parser.read(config_file)
+
+        config.update(dict(parser['general']))
+
+    return config
+
+# Default options
+def _defaults():
+    """Gets a dictionary of default options"""
+    return {
+        "color": True,
+        "start_codons": False,
+        "stop_codons": False,
+        "translate": False,
+        "cpg": False,
+        "translation_table": 1,
+        "translation_frame": 1,
+        "line_width": 70,
+        "theme": "default",
+        "_config_loaded": True
+    }
+
