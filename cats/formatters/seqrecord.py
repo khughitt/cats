@@ -3,14 +3,13 @@ SeqRecord formatter.
 """
 class SeqRecordFormatter(object):
     """Formatter for BioPython SeqRecord objects"""
-    def __init__(self):
+    def __init__(self, theme):
         """Creates a new SeqRecordFormatter instance"""
         import os
-        import configparser
         from cats.styles.sequence import SequenceFormatter
 
         # Load sequence formatter
-        self.seq_formatter = SequenceFormatter()
+        self.seq_formatter = SequenceFormatter(theme)
 
     def format(self, seqs, **kwargs):
         """Format sequence records"""

@@ -3,9 +3,9 @@ Annotation file formatters
 """
 class GFFFormatter(object):
     """Formatter for GFF annotation files"""
-    def __init__(self):
+    def __init__(self, theme):
         """Creates a new GFFFormater instance"""
-        pass
+        self._theme = theme
 
     def format(self, handler, **kwargs):
         """Format and print GFF file contents"""

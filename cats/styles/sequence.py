@@ -11,26 +11,8 @@ class SequenceFormatter(object):
         __import__(theme_module)
         self._theme = sys.modules[theme_module]
 
-        self._load_nucleic_acid_mapping()
-        self._load_amino_acid_mapping()
-
-    def _load_nucleic_acid_mapping(self):
-        """Loads nucleic acid mapping"""
-        from cats.styles import colors
-
-        # Generate list of colors to use for printing, ex:
-        # if config // use_system_colors:
-        #dna_colors = [colors.RED, colors.GREEN, colors.BLUE, colors.MAGENTA,
-        #              colors.WHITE]
-
-        # DNA
-        #self.dna = dict((x, dna_colors[i] + x) for i, x in
-        #                 enumerate(('A', 'C', 'G', 'T', 'N')))
-        #self.dna['\n'] = '\n'
-
-        self.dna = dict((k, '\033[38;05;%dm%s' % (v, k)) for
-                            k, v in list(self._theme.nucleic_acids.items()))
-        self.dna['\n'] = '\n'
+        self.dna = self._theme.nucleic_acids
+        self.amino_acid = self._theme.amino_acids
 
         # start/stop codons
         stop_template = '\033[0;041m\033[1;038m%s\033[0m'
@@ -40,6 +22,7 @@ class SequenceFormatter(object):
             "TAA": stop_template % "TAA",
             "TGA": stop_template % "TGA"
         }
+
 
     def _load_amino_acid_mapping(self):
         """Loads amino acid style mapping"""

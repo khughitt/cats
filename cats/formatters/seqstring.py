@@ -3,14 +3,13 @@ SeqString formatter
 """
 class SeqStringFormatter(object):
     """Formatter for sequence strings"""
-    def __init__(self):
+    def __init__(self, theme):
         """Creates a new SeqStringFormatter instance"""
         import os
-        import configparser
         from cats.styles.sequence import SequenceFormatter
 
         # Load sequence formatter
-        self.seq_formatter = SequenceFormatter()
+        self.seq_formatter = SequenceFormatter(theme)
 
     def format(self, inbuffer, outbuffer=None, **kwargs):
         """Format sequence records"""

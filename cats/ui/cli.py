@@ -21,7 +21,15 @@ def main():
     import types
 
     # Get default args
-    kwargs = _defaults()
+    kwargs = _get_default_args()
+
+    # update default arguments with user-specified settings
+    args = _get_args()
+    kwargs.update(args)
+
+    # load config
+    config = _load_config()
+    kwargs.update(config)
 
     # Ugly work-around 2013/12/19
     # Check for stdin and attempt to parse if it exists
@@ -43,16 +51,11 @@ def main():
         _print_logo()
 
     # Check for input file
-    args = _get_args()
-
     filepath = os.path.expanduser(args['file'])
 
     if not os.path.isfile(filepath):
-        print("No input specified")
+        print("Invalid filepath specified")
         sys.exit()
-
-    # update default arguments with user-specified settings
-    kwargs.update(args)
 
     try:
         output = cats.format(filepath, **kwargs)
@@ -125,7 +128,26 @@ def _get_args():
     # convert to a python dict and return without 
     return dict((k, v) for k, v in list(vars(args).items()) if v is not None)
 
-def _defaults():
+def _load_config():
+    """Loads user configuration if one exists"""
+    import os
+    import configparser
+
+    # Default configuration options
+    config = _get_default_config()
+
+    # Load config file if it exists
+    config_file = os.path.expanduser("~/.catsrc")
+
+    if os.path.isfile(config_file):
+        parser = configparser.ConfigParser()
+        parser.read(config_file)
+
+        config.update(dict(parser['general']))
+
+    return config
+
+def _get_default_args():
     """Returns a dictionary containing the default arguments to use during
     colorization."""
     return {
@@ -137,6 +159,12 @@ def _defaults():
         "translation_table": 1,
         "translation_frame": 1,
         "line_width": 70
+    }
+
+def _get_default_config():
+    """Returns a dictionary containing the default config file settings"""
+    return {
+        "theme": "default"
     }
 
 def _print_logo():

@@ -2,11 +2,8 @@
 ; Example .catsrc file
 ;
 
-;;;;;;;;;;
-; Colors ;
-;;;;;;;;;;
-[dna]
-a = [031m
-t = [092m
-c = [034m
-g = [095m
+[general]
+; color theme to use
+; currently supported options: default, system
+theme: default
+

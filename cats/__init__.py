@@ -16,6 +16,9 @@ def format(input_, *args, **kwargs):
     from Bio import Seq, SeqRecord
     from Bio.Alphabet import IUPAC
     from cats.files import detect_format
+
+    # Theme to use
+    theme = kwargs['theme']
     
     # Supported file formats
     supported_formats = {
@@ -55,17 +58,17 @@ def format(input_, *args, **kwargs):
             try:
                 seqs = [SeqRecord.SeqRecord(
                            Seq.Seq(input_, IUPAC.IUPACUnambiguousDNA()))]
-                formatter = cats.formatters.SeqRecordFormatter()
+                formatter = cats.formatters.SeqRecordFormatter(theme)
                 return formatter.format(seqs, **kwargs)
             except:
                 raise UnrecognizedInput
     elif isinstance(input_, SeqRecord.SeqRecord):
         # SeqRecord
-        formatter = cats.formatters.SeqRecordFormatter()
+        formatter = cats.formatters.SeqRecordFormatter(theme)
         return formatter.format([input_], **kwargs)
     elif isinstance(input_, Seq.Seq):
         # Seq
-        formatter = cats.formatters.SeqRecordFormatter()
+        formatter = cats.formatters.SeqRecordFormatter(theme)
         return formatter.format([SeqRecord.SeqRecord(input_)], **kwargs)
     elif isinstance(input_, TextIOWrapper):
         # STDIN
@@ -82,7 +85,7 @@ def format(input_, *args, **kwargs):
 
     # Sequence string
     if (file_format in ['nucleic_acid_string', 'amino_acid_string']):
-        formatter = cats.formatters.SeqStringFormatter()
+        formatter = cats.formatters.SeqStringFormatter(theme)
         formatter.format(fp, **kwargs)
         sys.exit()
 
@@ -90,22 +93,22 @@ def format(input_, *args, **kwargs):
     if (file_format in ['fasta']):
         # If not translating sequences, use faster FASTAFormatter
         if(not kwargs['translate']):
-            formatter = cats.formatters.FASTAFormatter()
+            formatter = cats.formatters.FASTAFormatter(theme)
             formatter.format(fp, **kwargs)
             sys.exit()
         else:
             # Otherwise use SeqRecord formatter
             seqs = SeqIO.parse(fp, file_format)
-            formatter = cats.formatters.SeqRecordFormatter()
+            formatter = cats.formatters.SeqRecordFormatter(theme)
             return formatter.format(seqs, **kwargs)
     # FASTQ
     if (file_format in ['fastq']):
-        formatter = cats.formatters.FASTQFormatter()
+        formatter = cats.formatters.FASTQFormatter(theme)
         formatter.format(fp, **kwargs)
         sys.exit()
     # GFF
     if (file_format is 'gff'):
-        formatter = cats.formatters.GFFFormatter()
+        formatter = cats.formatters.GFFFormatter(theme)
 
         # Ignore GFFParser induced deprecation warnings
         import warnings

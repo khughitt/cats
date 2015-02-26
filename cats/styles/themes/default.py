@@ -6,7 +6,7 @@ manipulation tools. So far I have not come across any conventions for
 displaying sequence letter, otherwise that might be a reasonable default to
 use.
 """
-nucleic_acids = {
+_nucleic_acids_mapping = {
     "A": 28,
     "C": 12,
     "G": 166,
@@ -14,7 +14,11 @@ nucleic_acids = {
     "U": 196
 }
 
-amino_acids = {
+nucleic_acids = dict((k, '\033[38;05;%dm%s' % (v, k)) for
+                        k, v in list(_nucleic_acid_mapping.items())
+nucleic_acids['\n'] = '\n'
+
+_amino_acids_mapping = {
     # Positively charged side chains (blue)
     "R": 75,
     "H": 69,
@@ -45,4 +49,9 @@ amino_acids = {
     "-": 255
 }
 
+amino_acids = dict((k, '\033[38;05;%dm%s' % (v, k)) for
+                        k, v in list(_amino_acid_mapping.items())
+amino_acids['\n'] = '\n'
+
 GREP_HIGHLIGHT_COLOR = "\033[38;05;%dm" % (226) # Yellow
+
