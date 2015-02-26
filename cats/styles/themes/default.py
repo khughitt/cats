@@ -15,7 +15,7 @@ _nucleic_acids_mapping = {
 }
 
 nucleic_acids = dict((k, '\033[38;05;%dm%s' % (v, k)) for
-                        k, v in list(_nucleic_acid_mapping.items())
+                        k, v in list(_nucleic_acid_mapping.items()))
 nucleic_acids['\n'] = '\n'
 
 _amino_acids_mapping = {
@@ -50,7 +50,7 @@ _amino_acids_mapping = {
 }
 
 amino_acids = dict((k, '\033[38;05;%dm%s' % (v, k)) for
-                        k, v in list(_amino_acid_mapping.items())
+                        k, v in list(_amino_acid_mapping.items()))
 amino_acids['\n'] = '\n'
 
 GREP_HIGHLIGHT_COLOR = "\033[38;05;%dm" % (226) # Yellow
