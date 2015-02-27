@@ -19,7 +19,9 @@ def format(input_, *args, **kwargs):
 
     # Load config
     if '_config_loaded' not in kwargs:
-        kwargs = _load_config()
+        config = _load_config()
+        config.update(kwargs)
+        kwargs = config
 
     # Theme to use
     theme = kwargs['theme']
