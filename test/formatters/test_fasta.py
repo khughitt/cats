@@ -23,7 +23,7 @@ class TestFASTAFormatter:
 
         # output
         output = io.StringIO()
-        cats.format(infile, outbuffer=output)
+        cats.format(infile, outbuffer=output, theme='default')
         output.seek(0)
 
         with open(os.path.join(testdir, 'output', output_file)) as fp:
