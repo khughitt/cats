@@ -23,9 +23,6 @@ class SeqRecordFormatter(object):
         RESET = '\033[0m'
         BOLD = '\033[1m'
 
-        # For now only display amino acids when translate requested
-        # @TODO: automatically detect/allow user to specify
-
         # select translation table
         # see: ftp://ftp.ncbi.nlm.nih.gov/entrez/misc/data/gc.prt
 

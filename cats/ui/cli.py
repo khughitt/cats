@@ -7,12 +7,6 @@ Keith Hughitt <khughitt@umd.edu>
 
 TODO:
     * convert to class?
-    * support for piping colored output into head/tail
-    * support for specifying input file format
-    * set default arguments in format so that cats can be used as a library
-    * generalizing highlight support (can keep --cpg, etc as convenience methods
-     which use the highlight functionality)
-    * alternate color schemes (e.g. http://www.ugr.es/~proyecto08173/qbiofisica/PROGRAMAS%20DE%20ORDENADOR/Analisis%20grafico%20de%20macromoleculas%20-%20Rastop%202.2/help/colour.htm)
 """
 def main():
     """Main"""
