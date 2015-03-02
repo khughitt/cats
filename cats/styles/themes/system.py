@@ -3,16 +3,18 @@ Theme incorporating system colors
 """
 from cats.styles import colors
 
-# Generate list of colors to use for printing, ex:
-_dna_colors = [colors.RED, colors.GREEN, colors.BLUE,
-              colors.MAGENTA, colors.WHITE]
+# DNA/RNA
+nucleotides = {
+    "A": colors.RED + "A",
+    "C": colors.GREEN + "C",
+    "G": colors.BLUE + "G",
+    "T": colors.MAGENTA + "T",
+    "U": colors.MAGENTA + "U",
+    "N": colors.WHITE + "N",
+    "\n": "\n"
+}
 
-# DNA
-nucleic_acids = dict((x, _dna_colors[i] + x) for i, x in
-                      enumerate(('A', 'C', 'G', 'T', 'N')))
-nucleic_acids['\n'] = '\n'
-
-_amino_acids_mapping = {
+_amino_acid_mapping = {
     # Positively charged side chains (blue)
     "R": 75,
     "H": 69,
@@ -44,7 +46,7 @@ _amino_acids_mapping = {
 }
 
 amino_acids = dict((k, '\033[38;05;%dm%s' % (v, k)) for
-                        k, v in list(_amino_acids_mapping.items()))
+                        k, v in list(_amino_acid_mapping.items()))
 amino_acids['\n'] = '\n'
 
 GREP_HIGHLIGHT_COLOR = "\033[38;05;%dm" % (226) # Yellow

@@ -64,7 +64,7 @@ class SeqRecordFormatter(object):
             else:
                 if kwargs['color']:
                     _seq = self._fill(str(seq.seq), width)
-                    buffer += self.seq_formatter.format_dna(_seq,
+                    buffer += self.seq_formatter.format_nucleic_acid(_seq,
                                                          kwargs['stop_codons'],
                                                          kwargs['cpg'])
                 else:

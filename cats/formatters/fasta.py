@@ -34,8 +34,8 @@ class FASTAFormatter(object):
                     outbuffer.write(BOLD + line)
                     continue
 
-                # DNA
-                outbuffer.write(self.seq_formatter.format_dna(line,
+                # DNA/RNA
+                outbuffer.write(self.seq_formatter.format_nucleic_acid(line,
                                                         kwargs['stop_codons'],
                                                         kwargs['cpg']))
         else:

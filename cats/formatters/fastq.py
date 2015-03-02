@@ -43,7 +43,7 @@ class FASTQFormatter(object):
                 if i % 4 == FASTQ_ID:
                     outbuffer.write(BOLD + line)
                 elif i % 4 == FASTQ_SEQ:
-                    outbuffer.write(self.seq_formatter.format_dna(line,
+                    outbuffer.write(self.seq_formatter.format_nucleic_acid(line,
                                                             kwargs['stop_codons'],
                                                             kwargs['cpg']))
                 else:

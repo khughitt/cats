@@ -11,7 +11,9 @@ class TestFASTAFormatter:
         ('dna.fasta', 'dna.fasta'),
         ('dna_grep1.fasta', 'dna_grep1.fasta'),
         ('dna_grep2.fasta', 'dna_grep2.fasta'),
-        ('dna_grep3.fasta', 'dna_grep3.fasta')
+        ('dna_grep3.fasta', 'dna_grep3.fasta'),
+        ('rna.fasta', 'rna.fasta'),
+        ('rna_grep.fasta', 'rna_grep.fasta')
     ])
 
     def test_format(self, input_file, output_file):

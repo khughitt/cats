@@ -11,8 +11,8 @@ class SequenceFormatter(object):
         __import__(theme_module)
         self._theme = sys.modules[theme_module]
 
-        self.dna = self._theme.nucleic_acids
-        self.amino_acid = self._theme.amino_acids
+        self.nucleotides = self._theme.nucleotides
+        self.amino_acids = self._theme.amino_acids
 
         # start/stop codons
         stop_template = '\033[0;041m\033[1;038m%s\033[0m'
@@ -23,8 +23,8 @@ class SequenceFormatter(object):
             "TGA": stop_template % "TGA"
         }
 
-    def format_dna(self, seq, color_stop_codons=False, color_cpg=False):
-        """Format a string of DNA nucleotides"""
+    def format_nucleic_acid(self, seq, color_stop_codons=False, color_cpg=False):
+        """Format a string of DNA/RNA nucleotides"""
         from cats.styles import colors
 
         output = ""
@@ -36,23 +36,23 @@ class SequenceFormatter(object):
         #    highlight_ranges.append((match.
         for i, part in enumerate(re.split(colors.GREP_HIGHLIGHT_RANGE, str(seq))):
             if i % 2 == 0:
-                output += "".join([self.dna[letter] for letter in part])
+                output += "".join([self.nucleotides[letter] for letter in part])
             else:
                 #output += '\033[38;05;227m%s\033[0m' % part
                 output += self._theme.GREP_HIGHLIGHT_COLOR + part + colors.RESET
 
         # Colorize sequence
-        #output = "".join([self.dna[letter] for letter in str(seq)])
+        #output = "".join([self.nucleotides[letter] for letter in str(seq)])
 
         # (Optional) Highlight stop codons
         if color_stop_codons:
-            for stop in ['TAG', 'TAA', 'TGA']:
-                output = output.replace("".join([self.dna[x] for x in stop]))
+            for stop in ['TAG', 'TAA', 'TGA', 'UAG', 'UAA', 'UGA']:
+                output = output.replace("".join([self.nucleotides[x] for x in stop]))
 
         # (Optional) Highlight CpG dinucleotides
         if color_cpg:
-            output = output.replace(self.dna['C'] + self.dna['G'], 
-                                    '\033[0;044m\033[1;038mCG\033[0m')
+            output = output.replace(self.nucleotides['C'] +
+                    self.nucleotides['G'], '\033[0;044m\033[1;038mCG\033[0m')
 
         return output
 
