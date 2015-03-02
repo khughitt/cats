@@ -99,6 +99,8 @@ def _get_args():
                         help='Highlight CpG dinucleotides')
     parser.add_argument('file', help='File containing sequence data.',
                         nargs='?')
+    parser.add_argument('-s', '--seq-type', dest='seq_type',
+                        help='Manually specify sequence type: dna,rna, or protein')
     parser.add_argument('-S', '--chop-long-lines', dest='chop', 
                         action='store_true',
                         help='Causes lines longer  than  the screen width ' +

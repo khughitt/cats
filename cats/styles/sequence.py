@@ -60,7 +60,7 @@ class SequenceFormatter(object):
         """Formats a protein sequence"""
         output = ""
         for i, residue in enumerate(str(seq), start=1):
-             output += self.amino_acid[residue]
+             output += self.amino_acids[residue]
 
         return output
 

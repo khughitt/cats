@@ -35,9 +35,13 @@ class FASTAFormatter(object):
                     continue
 
                 # DNA/RNA
-                outbuffer.write(self.seq_formatter.format_nucleic_acid(line,
-                                                        kwargs['stop_codons'],
-                                                        kwargs['cpg']))
+                if kwargs['seq_type'] in ['dna', 'rna', 'nucleic_acid']:
+                    outbuffer.write(self.seq_formatter.format_nucleic_acid(
+                        line, kwargs['stop_codons'], kwargs['cpg']
+                    ))
+                else:
+                    # Protein
+                    outbuffer.write(self.seq_formatter.format_protein(line))
         else:
             for line in inbuffer:
                 outbuffer.write(line)

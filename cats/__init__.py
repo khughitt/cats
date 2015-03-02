@@ -45,14 +45,19 @@ def format(input_, *args, **kwargs):
 
             # Determine file type to use
             if 'format' not in kwargs:
-                file_format = detect_format(input_, supported_formats)
+                # 2015/03/02 Disabling for now -- need to use peeker to
+                # determine sequence type
+                #file_format = detect_format(input_, supported_formats)
+                file_format = None
 
                 # if file extension is not recognized, attempt to guess format
                 if file_format is None:
                     # wrap with helper class allow us to guess the type
                     from .util import Peeker
                     fp = Peeker(fp)
-                    file_format = _guess_format(fp)
+                    file_format,seq_type = _guess_format(fp)
+
+                    kwargs['seq_type'] = seq_type
             else:
                 file_format = kwargs['format']
 
@@ -84,20 +89,21 @@ def format(input_, *args, **kwargs):
             # wrap with helper class allow us to guess the type
             from .util import Peeker
             input_ = Peeker(input_)
-            file_format = _guess_format(input_)
+            file_format,seq_type = _guess_format(input_)
+            kwargs['seq_type'] = seq_type
         fp = input_
     else:
         raise UnrecognizedInput
 
     # Sequence string
-    if (file_format in ['nucleic_acid_string', 'amino_acid_string']):
+    if file_format == 'sequence_string':
         formatter = cats.formatters.SeqStringFormatter(theme)
         formatter.format(fp, **kwargs)
         if kwargs['_entry_point'] == 'cli':
             sys.exit()
 
     # FASTA
-    if (file_format in ['fasta']):
+    if file_format == 'fasta':
         # If not translating sequences, use faster FASTAFormatter
         if(not kwargs['translate']):
             formatter = cats.formatters.FASTAFormatter(theme)
@@ -140,41 +146,17 @@ def _guess_format(handler):
 
     # FASTQ
     if lines[0].startswith("@"):
-        format = "fastq"
+        format = ("fastq",)
     elif lines[0].startswith(">"):
-        format = "fasta"
+        # determine type
+        format = ("fasta", _determine_sequence_type(lines[1]))
     elif lines[0].startswith("##gff"):
-        format.co= "gff"
+        format = ("gff",)
     else:
-        import re
-        from cats.styles.colors import GREP_HIGHLIGHT_START,GREP_HIGHLIGHT_STOP
-
-        # escape any byte characters resulting from grep
-        escaped = re.sub(GREP_HIGHLIGHT_STOP, '',
-                         re.sub(GREP_HIGHLIGHT_START, '', lines[0])).strip()
-
         # check to see if it is a simple sequence string
+        seq_type = _determine_sequence_type(lines[0])
 
-        # DEBUGGING
-        # zgrep -e
-        #In [2]: x = fp.read()
-
-        #In [3]: set(x)
-        #Out[3]: {'\n', '\x1b', '0', '1', '2', '3', ';', 'A', 'C', 'G', 'K', 'T', '[', 'm'}
-
-        # grep
-        #In [4]: fp2 = open('/home/keith/test.grep')
-
-        #In [5]: x2 = fp2.read()
-
-        #In [6]: set(x2)
-        #Out[6]: {'\n', '\x1b', '1', '2', '3', ';', 'A', 'C', 'G', 'K', 'T', '[', 'm
-
-        if set(escaped).issubset(set('AGCTURY')):
-            format = 'nucleic_acid_string'
-        elif set(escaped).issubset(set('ARNDCQEGHILKMFPSTWYV*')):
-            format = 'amino_acid_string'
-        else:
+        if seq_type not in ['nucleic_acid', 'protein']:
             print("Unrecognized Input:")
             #print(set(escaped))
             #print(str(set(escaped)))
@@ -185,7 +167,27 @@ def _guess_format(handler):
             #fp.writelines(escaped)
             raise UnrecognizedInput
 
+        format = ("sequence_string", seq_type)
+
     return format
+
+def _strip_bytecodes(string):
+    """Removes any grep, etc. associated escape sequences found in a string"""
+    import re
+    from cats.styles.colors import GREP_HIGHLIGHT_START,GREP_HIGHLIGHT_STOP
+
+    # escape any byte characters resulting from grep
+    return(re.sub(GREP_HIGHLIGHT_STOP, '',
+                  re.sub(GREP_HIGHLIGHT_START, '', string)).strip())
+
+def _determine_sequence_type(string):
+    """Attempts to determine if a sequence is either nucleic acid or protein"""
+    escaped = _strip_bytecodes(string)
+
+    if set(escaped).issubset(set('AGCTURY')):
+        return 'nucleic_acid'
+    elif set(escaped).issubset(set('ARNDCQEGHILKMFPSTWYV*')):
+        return 'protein'
 
 def _load_config(entry_point='library'):
     """Loads user configuration if one exists"""
