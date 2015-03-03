@@ -33,6 +33,9 @@ def format(input_, *args, **kwargs):
         'gff': ['gff', 'gtf', 'gff3']
     }
 
+    # Formats with variable sequence type
+    seq_type_needed = ['fasta', 'fastq']
+
     # Check input type
     if isinstance(input_, str):
         if os.path.isfile(input_):
@@ -43,27 +46,26 @@ def format(input_, *args, **kwargs):
             else:
                 fp = open(input_)
 
-            # Determine file type to use
-            if 'format' not in kwargs:
-                # 2015/03/02 Disabling for now -- need to use peeker to
-                # determine sequence type
-                #file_format = detect_format(input_, supported_formats)
-                file_format = None
-
-                # if file extension is not recognized, attempt to guess format
-                if file_format is None:
-                    # wrap with helper class allow us to guess the type
-                    from .util import Peeker
-                    fp = Peeker(fp)
-                    file_format,seq_type = _guess_format(fp)
-
-                    kwargs['seq_type'] = seq_type
-            else:
-                file_format = kwargs['format']
-
-                if file_format not in list(supported_formats.keys()):
+            # If format specified, check to make sure it is supported
+            if ('format' in kwargs and kwargs['format'] not in
+                list(supported_formats.keys())):
                     raise UnrecognizedInput("Unsupported file format")
 
+            # Otherwise, attempt to guess format and sequence type if needed
+            kwargs['format'] = detect_format(input_, supported_formats)
+
+            if ((kwargs['format'] is None) or (kwargs['format'] in
+                    seq_type_needed and 'seq_type' not in kwargs)):
+                # Wrap with helper class allow us to guess the type
+                from .util import Peeker
+                fp = Peeker(fp)
+                file_format,seq_type = _guess_format(fp)
+
+                # Set format and sequence type
+                if kwargs['format'] is None:
+                    kwargs['format'] = file_format
+                if 'seq_type' not in kwargs:
+                    kwargs['seq_type'] = seq_type
         else:
             # Sequence string
             try:
@@ -83,27 +85,29 @@ def format(input_, *args, **kwargs):
         return formatter.format([SeqRecord.SeqRecord(input_)], **kwargs)
     elif isinstance(input_, TextIOWrapper):
         # STDIN
-        if 'format' in kwargs:
-            file_format = kwargs['format']
-        else:
+        if 'format' not in kwargs or 'seq_type' not in kwargs:
             # wrap with helper class allow us to guess the type
             from .util import Peeker
             input_ = Peeker(input_)
             file_format,seq_type = _guess_format(input_)
-            kwargs['seq_type'] = seq_type
+
+            if 'format' not in kwargs:
+                kwargs['format'] = file_format
+            if 'seq_type' not in kwargs:
+                kwargs['seq_type'] = seq_type
         fp = input_
     else:
         raise UnrecognizedInput
 
     # Sequence string
-    if file_format == 'sequence_string':
+    if kwargs['format'] == 'sequence_string':
         formatter = cats.formatters.SeqStringFormatter(theme)
         formatter.format(fp, **kwargs)
         if kwargs['_entry_point'] == 'cli':
             sys.exit()
 
     # FASTA
-    if file_format == 'fasta':
+    if kwargs['format'] == 'fasta':
         # If not translating sequences, use faster FASTAFormatter
         if(not kwargs['translate']):
             formatter = cats.formatters.FASTAFormatter(theme)
@@ -112,17 +116,17 @@ def format(input_, *args, **kwargs):
                 sys.exit()
         else:
             # Otherwise use SeqRecord formatter
-            seqs = SeqIO.parse(fp, file_format)
+            seqs = SeqIO.parse(fp, kwargs['format'])
             formatter = cats.formatters.SeqRecordFormatter(theme)
             return formatter.format(seqs, **kwargs)
     # FASTQ
-    if (file_format in ['fastq']):
+    if (kwargs['format'] in ['fastq']):
         formatter = cats.formatters.FASTQFormatter(theme)
         formatter.format(fp, **kwargs)
         if kwargs['_entry_point'] == 'cli':
             sys.exit()
     # GFF
-    if (file_format is 'gff'):
+    if (kwargs['format'] is 'gff'):
         formatter = cats.formatters.GFFFormatter(theme)
 
         # Ignore GFFParser induced deprecation warnings

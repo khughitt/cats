@@ -18,6 +18,9 @@ class Peeker(object):
         #self.buf = io.BytesIO()
         self.buf = io.StringIO()
 
+        self.mode = self.fileobj.mode
+        self.name = self.fileobj.name
+
     def _append_to_buf(self, contents):
         oldpos = self.buf.tell()
         self.buf.seek(0, os.SEEK_END)
@@ -52,8 +55,15 @@ class Peeker(object):
             contents += self.fileobj.read(size - len(contents))
         return contents
 
+    def readable(self):
+        return self.fileobj.readable()
+
     def readline(self):
         line = self.buf.readline()
         if not line.endswith('\n'):
             line += self.fileobj.readline()
         return line
+
+    def seekable(self):
+        return self.fileobj.seekable()
+
