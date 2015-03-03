@@ -9,11 +9,11 @@ import pytest
 class TestFASTAFormatter:
     @pytest.mark.parametrize('input_file,output_file', [
         ('dna.fasta', 'dna.fasta'),
-        ('dna_grep1.fasta', 'dna_grep1.fasta'),
-        ('dna_grep2.fasta', 'dna_grep2.fasta'),
-        ('dna_grep3.fasta', 'dna_grep3.fasta'),
-        ('rna.fasta', 'rna.fasta'),
-        ('rna_grep.fasta', 'rna_grep.fasta'),
+        ('dna_grep.fasta', 'dna_grep.fasta'),
+        ('dna.txt', 'dna.txt'),
+        ('dna_grep.txt', 'dna_grep.txt'),
+        ('rna.txt', 'rna.txt'),
+        ('rna_grep.txt', 'rna_grep.txt'),
         ('protein.fasta', 'protein.fasta')
     ])
 
