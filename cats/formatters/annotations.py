@@ -18,7 +18,7 @@ class GFFFormatter(object):
         output = ""
 
         # Read contents of file into a string buffer
-        contents.write(handler.read())
+        contents.write(handler.read().decode())
         contents.seek(0)
         handler.seek(0)
         

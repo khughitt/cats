@@ -11,7 +11,7 @@ def format(input_, *args, **kwargs):
     """Formats bioinformatics related data for display on the console."""
     import os
     import sys
-    from io import TextIOWrapper
+    from io import BufferedReader
     from Bio import SeqIO
     from Bio import Seq, SeqRecord
     from Bio.Alphabet import IUPAC
@@ -44,7 +44,7 @@ def format(input_, *args, **kwargs):
                 import gzip
                 fp = gzip.open(input_, 'rb')
             else:
-                fp = open(input_)
+                fp = open(input_, 'rb')
 
             # If format specified, check to make sure it is supported
             if ('format' in kwargs and kwargs['format'] not in
@@ -57,8 +57,6 @@ def format(input_, *args, **kwargs):
             if ((kwargs['format'] is None) or (kwargs['format'] in
                     seq_type_needed and 'seq_type' not in kwargs)):
                 # Wrap with helper class allow us to guess the type
-                from .util import Peeker
-                fp = Peeker(fp)
                 file_format,seq_type = _guess_format(fp)
 
                 # Set format and sequence type
@@ -83,12 +81,10 @@ def format(input_, *args, **kwargs):
         # Seq
         formatter = cats.formatters.SeqRecordFormatter(theme)
         return formatter.format([SeqRecord.SeqRecord(input_)], **kwargs)
-    elif isinstance(input_, TextIOWrapper):
+    elif isinstance(input_, BufferedReader):
         # STDIN
         if 'format' not in kwargs or 'seq_type' not in kwargs:
             # wrap with helper class allow us to guess the type
-            from .util import Peeker
-            input_ = Peeker(input_)
             file_format,seq_type = _guess_format(input_)
 
             if 'format' not in kwargs:
@@ -146,7 +142,7 @@ def _guess_format(handler):
     """
 
     # Grab few first lines
-    lines = [handler.peekline() for x in range(3)]
+    lines = handler.peek()[:500].decode().split('\n')
 
     # FASTQ
     if lines[0].startswith("@"):

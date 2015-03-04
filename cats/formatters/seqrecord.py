@@ -14,7 +14,7 @@ class SeqRecordFormatter(object):
     def format(self, seqs, **kwargs):
         """Format sequence records"""
         # output buffer
-        buffer = ""
+        outbuffer = ""
 
         # for x in range(1,10):
         # print "\033[03%dmTEST   \033[09%dmTEST" % (x,x)
@@ -29,13 +29,13 @@ class SeqRecordFormatter(object):
         # Iterate through and format each sequence record
         for seq in seqs:
             # Reset formatting
-            buffer += RESET
+            outbuffer += RESET
 
             # Print description
             if kwargs['color']:
-                buffer += BOLD
+                outbuffer += BOLD
 
-            buffer += ">" + seq.description + "\n"
+            outbuffer += ">" + seq.description + "\n"
 
             # line width
             width = kwargs['line_width']
@@ -56,22 +56,22 @@ class SeqRecordFormatter(object):
                 # format and append to output buffer
                 if kwargs['color']:
                     _seq = self._fill(translated, width)
-                    buffer += self.seq_formatter.format_protein(_seq)
+                    outbuffer += self.seq_formatter.format_protein(_seq)
                 else:
-                    buffer += self._fill(translated, width)
+                    outbuffer += self._fill(translated, width)
 
             # DNA
             else:
                 if kwargs['color']:
                     _seq = self._fill(str(seq.seq), width)
-                    buffer += self.seq_formatter.format_nucleic_acid(_seq,
+                    outbuffer += self.seq_formatter.format_nucleic_acid(_seq,
                                                          kwargs['stop_codons'],
                                                          kwargs['cpg'])
                 else:
-                    buffer += self._fill(str(seq.seq), width)
+                    outbuffer += self._fill(str(seq.seq), width)
 
         # Return result
-        return buffer
+        return outbuffer
 
     def _fill(self, text, width=70):
         """

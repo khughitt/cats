@@ -35,9 +35,8 @@ class FASTQFormatter(object):
                 # Reset formatting
                 outbuffer.write(RESET)
 
-                # Convert from byte-string if coming from gzip
-                if type(line) is bytes:
-                    line = line.decode('ascii')
+                # line = line.decode('ascii')
+                line = line.decode()
 
                 # Print description
                 if i % 4 == FASTQ_ID:
@@ -50,7 +49,7 @@ class FASTQFormatter(object):
                     outbuffer.write(line)
         else:
             for line in inbuffer:
-                outbuffer.write(line)
+                outbuffer.write(line.decode())
 
 class UnrecognizedInput(IOError):
     """Unrecognized input error"""

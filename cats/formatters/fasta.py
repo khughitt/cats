@@ -26,6 +26,8 @@ class FASTAFormatter(object):
         # Iterate through and format each sequence record
         if kwargs['color']:
             for line in inbuffer:
+                line = line.decode()
+
                 # Reset formatting
                 outbuffer.write(RESET)
 
@@ -44,7 +46,7 @@ class FASTAFormatter(object):
                     outbuffer.write(self.seq_formatter.format_protein(line))
         else:
             for line in inbuffer:
-                outbuffer.write(line)
+                outbuffer.write(line.decode())
 
 class UnrecognizedInput(IOError):
     """Unrecognized input error"""

@@ -30,8 +30,8 @@ class SeqStringFormatter(object):
                 outbuffer.write(RESET)
 
                 # Convert from byte-string if coming from gzip
-                if type(line) is bytes:
-                    line = line.decode('ascii')
+                #line = line.decode('ascii')
+                line = line.decode()
 
                 # Print description
                 outbuffer.write(self.seq_formatter.format_nucleic_acid(line,
@@ -39,7 +39,7 @@ class SeqStringFormatter(object):
                                                         kwargs['cpg']))
         else:
             for line in inbuffer:
-                outbuffer.write(line)
+                outbuffer.write(line.decode())
 
 class UnrecognizedInput(IOError):
     """Unrecognized input error"""

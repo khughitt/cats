@@ -31,7 +31,7 @@ def main():
     # @TODO Refactor
     if not sys.stdin.isatty():
         try:
-            stream_formatter = cats.format(sys.stdin, **kwargs)
+            stream_formatter = cats.format(sys.stdin.buffer, **kwargs)
             sys.exit()
         except BrokenPipeError:
             sys.exit()
