@@ -12,7 +12,7 @@ CLASSIFIERS = [
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
     'Topic :: Scientific/Engineering',
-    'Topic :: Scientific/Engineering :: Bio-Informatics'
+    'Topic :: Scientific/Engineering :: Bio-Informatics',
     'Operating System :: Microsoft :: Windows',
     'Operating System :: POSIX',
     'Operating System :: Unix',
@@ -25,6 +25,9 @@ setup(
     classifiers=CLASSIFIERS,
     description=DOCLINES[0],
     install_requires=['biopython', 'bcbio-gff'],
+	setup_requires=['pytest-runner'],
+	tests_require=['pytest>=2.8'],
+	include_package_data=True,
     license="BSD",
     long_description="\n".join(DOCLINES[2:]),
     maintainer="Keith Hughitt",
@@ -35,6 +38,7 @@ setup(
     platforms=["Linux", "Solaris", "Mac OS-X", "Unix"],
     provides=['cats'],
     url="https://github.com/khughitt/cats",
+    zip_safe=False,
     version="0.3",
     entry_points={
         'console_scripts': ['cats = cats.ui.cli:main']

@@ -1,0 +1,2 @@
+include cats/data/sample/*
+graft docs
