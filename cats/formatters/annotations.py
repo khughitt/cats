@@ -29,7 +29,7 @@ class GFFFormatter(object):
             output += colors.WHITE + line
             last_loc = contents.tell()
             line = contents.readline()
-        fp.seek(last_loc)
+        handler.seek(last_loc)
 
         # Output templates
         #_gene = colors.BLUE + "[%s] %s (%d features)\n"
