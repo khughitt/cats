@@ -23,7 +23,6 @@ setup(
     author="Keith Hughitt",
     author_email="khughitt@umd.edu",
     classifiers=CLASSIFIERS,
-    description=DOCLINES[0],
     description="Command-line tool for manipulating and displaying commonly used bioinformatic file formats.",
     install_requires=['biopython', 'bcbio-gff'],
 	setup_requires=['pytest-runner'],
