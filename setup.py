@@ -1,5 +1,5 @@
 """
-cats: cat for sequnce data
+cats: cat sequence
 """
 DOCLINES = __doc__.split("\n")
 
@@ -24,12 +24,12 @@ setup(
     author_email="khughitt@umd.edu",
     classifiers=CLASSIFIERS,
     description=DOCLINES[0],
+    description="Command-line tool for manipulating and displaying commonly used bioinformatic file formats.",
     install_requires=['biopython', 'bcbio-gff'],
 	setup_requires=['pytest-runner'],
 	tests_require=['pytest>=2.8'],
 	include_package_data=True,
     license="BSD",
-    long_description="\n".join(DOCLINES[2:]),
     maintainer="Keith Hughitt",
     maintainer_email="khughitt@umd.edu",
     name="cats",

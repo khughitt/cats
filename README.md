@@ -1,7 +1,7 @@
 cats
 ====
 
-pretty print and other basic manipulations for sequence data.
+Pretty print and other basic manipulations for sequence data.
 
 Screenshot
 ----------
