@@ -1,6 +1,8 @@
 cats
 ====
 
+[![Build Status](https://travis-ci.org/khughitt/cats.svg?branch=master)](https://travis-ci.org/khughitt/cats)
+
 Pretty print and other basic manipulations for sequence data.
 
 Screenshot
