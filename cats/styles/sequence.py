@@ -30,10 +30,6 @@ class SequenceFormatter(object):
         output = ""
 
         # Check for pre-existing highlighting (e.g. grep)
-        #highlight_ranges = []
-
-        #for match in re.finditer(colors.GREP_HIGHLIGHT_RANGE, seq):
-        #    highlight_ranges.append((match.
         for i, part in enumerate(re.split(colors.GREP_HIGHLIGHT_RANGE, str(seq))):
             if i % 2 == 0:
                 output += "".join([self.nucleotides[letter] for letter in part])

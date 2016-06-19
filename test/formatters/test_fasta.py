@@ -12,6 +12,7 @@ class TestFASTAFormatter:
         ('dna_grep.fasta', 'dna_grep.fasta'),
         ('dna.txt', 'dna.txt'),
         ('dna_grep.txt', 'dna_grep.txt'),
+        ('dna_zgrep.txt', 'dna_zgrep.txt'),
         ('rna.txt', 'rna.txt'),
         ('rna_grep.txt', 'rna_grep.txt'),
         ('protein.fasta', 'protein.fasta')

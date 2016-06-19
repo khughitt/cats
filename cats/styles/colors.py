@@ -8,19 +8,18 @@ RESET = '\033[0m'
 BOLD  = '\033[1m'
 
 #
-# Grep highlight codes
-# (needs to be looked at more closely...)
+# grep/zgrep ansi highlight escape codes
 #
-#GREP_HIGHLIGHT_START = re.escape('\x1b[1;32m') + '\n?' + re.escape('\x1b') + '\n?\\[K'
-#GREP_HIGHLIGHT_START = '\\\x1b\\[1\\;32m\n?\\\x1b\n?\\[K'
-GREP_HIGHLIGHT_START = '\\\x1b\\[0?1\\;3[1-2]m\n?\\\x1b\n?\\[K'
-GREP_HIGHLIGHT_STOP  = re.escape('\x1b[m\x1b[K')
-GREP_HIGHLIGHT_RANGE = re.compile("%s([AGCTU\n]*)%s" % (GREP_HIGHLIGHT_START,
-                                                      GREP_HIGHLIGHT_STOP))
-
-#GREP_HIGHLIGHT_START = '\\\x1b\\[1\\;32m\n?(\\\x1b)?\n?(\\[K)?'
-#GREP_HIGHLIGHT_STOP = '\\\x1b\\[(00)?m\\\x1b\\[K'
-
+# Start:
+#    grep - \x1b[1;32m\x1b[K
+#   zgrep - \x1b[1;32m
+# Stop:
+#    grep - \x1b[m\x1b[K
+#   zgrep - \x1b[00m\x1b[K
+#  
+GREP_HIGHLIGHT_START = '\\\x1b\\[0?1\\;3[1-2]m\n?\\\x1b?\n?\\[?K?'
+GREP_HIGHLIGHT_STOP  = '\\\x1b\\[0?0?m\\\x1b\\[K'
+GREP_HIGHLIGHT_RANGE = re.compile("%s([ACGTU\n]*)%s" % (GREP_HIGHLIGHT_START, GREP_HIGHLIGHT_STOP))
 
 #
 # Terminal colors

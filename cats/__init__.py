@@ -171,10 +171,15 @@ def _guess_format(handler):
 
     return format
 
-def _strip_bytecodes(string):
+def _strip_ansi_escapes(string):
     """Removes any grep, etc. associated escape sequences found in a string"""
     import re
     from cats.styles.colors import GREP_HIGHLIGHT_START,GREP_HIGHLIGHT_STOP
+
+    # stripping color-related ansi escape sequences
+    # http://stackoverflow.com/questions/14693701/how-can-i-remove-the-ansi-escape-sequences-from-a-string-in-python
+    # ansi_escape = re.compile(r'\x1b[^m]*m(\x1b\[K)?')
+    # ansi_escape.sub('', x)
 
     # escape any byte characters resulting from grep
     return(re.sub(GREP_HIGHLIGHT_STOP, '',
@@ -182,7 +187,7 @@ def _strip_bytecodes(string):
 
 def _determine_sequence_type(string):
     """Attempts to determine if a sequence is either nucleic acid or protein"""
-    escaped = _strip_bytecodes(string)
+    escaped = _strip_ansi_escapes(string)
 
     if set(escaped).issubset(set('AGCTURY')):
         return 'nucleic_acid'
