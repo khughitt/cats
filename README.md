@@ -3,12 +3,12 @@ cats
 
 [![Build Status](https://travis-ci.org/khughitt/cats.svg?branch=master)](https://travis-ci.org/khughitt/cats)
 
-Pretty print and other basic manipulations for sequence data.
+Command-line tool for manipulating and displaying commonly used bioinformatic file formats.
 
 Screenshot
 ----------
 
-![cats screenshot](https://raw.github.com/khughitt/cats/master/doc/screenshot.png)
+![cats screenshot](https://raw.github.com/khughitt/cats/master/docs/screenshot-grep.png)
 
 Installation
 ------------
@@ -44,7 +44,7 @@ Or grep for an interesting feature and pipe the output into cats:
 
     grep --color='always' "AAUAA" input.fastq | cats
 
-Gzipped files are also supported:
+Gzipped files are also supported, using zgrep:
 
     zgrep --color='always' "AAAAA$" input.fastq.gz | cats
 
