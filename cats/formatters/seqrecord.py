@@ -5,16 +5,17 @@ class SeqRecordFormatter(object):
     """Formatter for BioPython SeqRecord objects"""
     def __init__(self, theme):
         """Creates a new SeqRecordFormatter instance"""
-        import os
         from cats.styles.sequence import SequenceFormatter
 
         # Load sequence formatter
         self.seq_formatter = SequenceFormatter(theme)
 
-    def format(self, seqs, **kwargs):
+    def format(self, seqs, outbuffer=None, **kwargs):
         """Format sequence records"""
-        # output buffer
-        outbuffer = ""
+        # default to STDOUT for output
+        if outbuffer is None:
+            import sys
+            outbuffer = sys.stdout
 
         # for x in range(1,10):
         # print "\033[03%dmTEST   \033[09%dmTEST" % (x,x)
@@ -29,13 +30,13 @@ class SeqRecordFormatter(object):
         # Iterate through and format each sequence record
         for seq in seqs:
             # Reset formatting
-            outbuffer += RESET
+            outbuffer.write(RESET)
 
             # Print description
             if kwargs['color']:
-                outbuffer += BOLD
+                outbuffer.write(BOLD)
 
-            outbuffer += ">" + seq.description + "\n"
+            outbuffer.write(">" + seq.description + "\n")
 
             # line width
             width = kwargs['line_width']
@@ -56,22 +57,19 @@ class SeqRecordFormatter(object):
                 # format and append to output buffer
                 if kwargs['color']:
                     _seq = self._fill(translated, width)
-                    outbuffer += self.seq_formatter.format_protein(_seq)
+                    outbuffer.write(self.seq_formatter.format_protein(_seq))
                 else:
-                    outbuffer += self._fill(translated, width)
+                    outbuffer.write(self._fill(translated, width))
 
             # DNA
             else:
                 if kwargs['color']:
                     _seq = self._fill(str(seq.seq), width)
-                    outbuffer += self.seq_formatter.format_nucleic_acid(_seq,
+                    outbuffer.write(self.seq_formatter.format_nucleic_acid(_seq,
                                                          kwargs['stop_codons'],
-                                                         kwargs['cpg'])
+                                                         kwargs['cpg']))
                 else:
-                    outbuffer += self._fill(str(seq.seq), width)
-
-        # Return result
-        return outbuffer
+                    outbuffer.write(self._fill(str(seq.seq), width))
 
     def _fill(self, text, width=70):
         """

@@ -22,7 +22,7 @@ def main():
     # update default arguments with user-specified settings
     parser = _get_args()
 
-    # convert to a python dict and return without 
+    # convert args to a python dict
     args = parser.parse_args()
     args = dict((k, v) for k, v in list(vars(args).items()) if v is not None)
 
@@ -52,25 +52,25 @@ def main():
         sys.exit()
 
     try:
-        output = cats.format(filepath, **kwargs)
+        cats.format(filepath, **kwargs)
     except BrokenPipeError:
         sys.exit()
     except KeyboardInterrupt:
         sys.exit()
 
     # output results
-    try:
-        if isinstance(output, str):
-            print(output)
-        else:
-            outbuffer = sys.stdout
-            for line in output:
-                outbuffer.write(line)
-        sys.exit()
-    except BrokenPipeError:
-        sys.exit()
-    except KeyboardInterrupt:
-        sys.exit()
+    # try:
+    #     if isinstance(output, str):
+    #         print(output)
+    #     else:
+    #         outbuffer = sys.stdout
+    #         for line in output:
+    #             outbuffer.write(line)
+    #     sys.exit()
+    # except BrokenPipeError:
+    #     sys.exit()
+    # except KeyboardInterrupt:
+    #     sys.exit()
 
     # output pager
     #pager_cmd = 'less -R'

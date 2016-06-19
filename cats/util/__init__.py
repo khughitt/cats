@@ -15,10 +15,12 @@ class Peeker(object):
     def __init__(self, fileobj):
         import io
         self.fileobj = fileobj
-        #self.buf = io.BytesIO()
         self.buf = io.StringIO()
 
-        self.mode = self.fileobj.mode
+        # if coming from a TextIOWrapper, mode will have been lost
+        if hasattr(fileobj, 'mode'):
+            self.mode = self.fileobj.mode
+
         self.name = self.fileobj.name
 
     def _append_to_buf(self, contents):

@@ -112,6 +112,15 @@ def format(input_, *args, **kwargs):
                 sys.exit()
         else:
             # Otherwise use SeqRecord formatter
+
+            # TextIOWrapper + Peeker classes are used as a work-around since
+            # BioPython currently does not support buffered streams
+            # https://github.com/biopython/biopython/issues/466
+            from cats.util import Peeker
+            from io import TextIOWrapper
+
+            fp = Peeker(TextIOWrapper(fp))
+
             seqs = SeqIO.parse(fp, kwargs['format'])
             formatter = cats.formatters.SeqRecordFormatter(theme)
             return formatter.format(seqs, **kwargs)
