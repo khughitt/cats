@@ -38,7 +38,7 @@ def main():
         except KeyboardInterrupt:
             sys.exit()
 
-    # If not arguments specified dispay help
+    # If no arguments specified dispay help
     if (len(sys.argv) == 1) or ("-h" in sys.argv) or ("--help" in sys.argv):
         _print_logo()
         parser.print_help()
@@ -109,10 +109,12 @@ def _get_args():
                         help='Translate a nucleotide sequence to an ' +
                              'amino acid sequence.', dest='translate')
     parser.add_argument('--translation-table', dest='translation_table',
+                        type=int,
                         help='NCBI translation table ' +
                         'to use (default=1)', metavar='NUMBER')
     parser.add_argument('-o', '--translation-frame', metavar='FRAME', 
                         type=int, dest='translation_frame',
+                        choices=[-3,-2,-1,1,2,3],
                         help='Frame to use when translating to amino acids: ' +
                              'forward and reverse complement frames are ' +
                              'specified using 1, 2, 3, -1, -2, and -3. The ' + 

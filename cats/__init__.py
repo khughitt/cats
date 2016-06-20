@@ -134,12 +134,21 @@ def format(input_, *args, **kwargs):
     if (kwargs['format'] is 'gff'):
         formatter = cats.formatters.GFFFormatter(theme)
 
+        # TextIOWrapper + Peeker classes are used as a work-around since
+        # GFF parser currently does not support buffered streams either..
+        from cats.util import Peeker
+        from io import TextIOWrapper
+
+        fp = Peeker(TextIOWrapper(fp))
+
         # Ignore GFFParser induced deprecation warnings
         import warnings
         from Bio import BiopythonDeprecationWarning
+
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore",
                                     category=BiopythonDeprecationWarning)
+
             return formatter.format(fp, **kwargs)
 
 def _guess_format(handler):

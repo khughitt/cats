@@ -39,6 +39,11 @@ class Peeker(object):
         else:
             return line
 
+    def seek(self, pos):
+        # calling seek resets peek buffer
+        self.fileobj.seek(pos)
+        self.buf.seek(0)
+
     def peek(self, size):
         contents = self.fileobj.read(size)
         self._append_to_buf(contents)
