@@ -24,7 +24,7 @@ setup(
     author_email="khughitt@umd.edu",
     classifiers=CLASSIFIERS,
     description="Command-line tool for manipulating and displaying commonly used bioinformatic file formats.",
-    install_requires=['biopython', 'bcbio-gff'],
+    install_requires=['biopython'],
 	setup_requires=['pytest-runner'],
 	tests_require=['pytest>=2.8'],
 	include_package_data=True,
@@ -38,7 +38,7 @@ setup(
     provides=['cats'],
     url="https://github.com/khughitt/cats",
     zip_safe=False,
-    version="0.3",
+    version="0.4",
     entry_points={
         'console_scripts': ['cats = cats.ui.cli:main']
     }
