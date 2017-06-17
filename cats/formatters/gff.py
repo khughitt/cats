@@ -32,19 +32,23 @@ class GFFFormatter(object):
             # Reset formatting
             outbuffer.write(RESET)
     
-            # Print comment
+            # Print comment / metadata
             if line.startswith("#"):
                 # Comment
-                outbuffer.write(colors.WHITE + line)
+                outbuffer.write(colors.LIGHTGREY + line)
                 continue
 
             # Select colors for entry
-            if '\tgene\t' in line:
+            if '\toperon\t' in line or '\tchromosome\t' in line:
+                cols = [colors.RED_DARK, colors.RED]
+            elif '\tgene\t' in line:
                 cols = [colors.BLUE_DARK, colors.BLUE]
             elif '\tmRNA\t' in line:
                 cols = [colors.YELLOW_DARK, colors.YELLOW]
             elif '\tCDS\t' in line:
                 cols = [colors.MAGENTA_DARK, colors.MAGENTA]
+            elif '\texon\t' in line:
+                cols = [colors.CYAN_DARK, colors.CYAN]
             else:
                 cols = [colors.GREEN_DARK, colors.GREEN]
 
