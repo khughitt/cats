@@ -38,6 +38,10 @@ amino_acids = dict((k, '\033[38;05;%dm%s' % (v, k)) for
                         k, v in list(_amino_acid_mapping.items()))
 amino_acids['\n'] = '\n'
 
+# GFF files
+# TODO: add default GFF highlight colors
+
+
 # grep highlighting
 GREP_HIGHLIGHT_COLOR = "\033[38;05;%dm" % (226) # Yellow
 

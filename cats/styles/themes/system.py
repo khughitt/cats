@@ -15,5 +15,20 @@ nucleotides = {
     "\n": "\n"
 }
 
-
+# GFF files
+gff_colors = {
+    'meta': colors.LIGHTGREY,
+    '1a': colors.RED_DARK,
+    '1b': colors.RED,
+    '2a': colors.BLUE_DARK,
+    '2b': colors.BLUE,
+    '3a': colors.YELLOW_DARK,
+    '3b': colors.YELLOW,
+    '4a': colors.MAGENTA_DARK,
+    '4b': colors.MAGENTA,
+    '5a': colors.CYAN_DARK,
+    '5b': colors.CYAN,
+    '6a': colors.GREEN_DARK,
+    '6n': colors.GREEN
+}
 

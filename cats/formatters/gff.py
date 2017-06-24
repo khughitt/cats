@@ -5,7 +5,12 @@ class GFFFormatter(object):
     """Formatter for GFF files"""
     def __init__(self, theme):
         """Creates a new GFFFormatter instance"""
-        self._theme = theme
+        # load theme
+        import sys
+
+        theme_module = 'cats.styles.themes.%s' % theme
+        __import__(theme_module)
+        self._theme = sys.modules[theme_module]
 
     def format(self, inbuffer, outbuffer=None, **kwargs):
         """Format sequence records"""
@@ -35,22 +40,22 @@ class GFFFormatter(object):
             # Print comment / metadata
             if line.startswith("#"):
                 # Comment
-                outbuffer.write(colors.LIGHTGREY + line)
+                outbuffer.write(self._theme.gff_colors['meta'] + line)
                 continue
 
             # Select colors for entry
             if '\toperon\t' in line or '\tchromosome\t' in line:
-                cols = [colors.RED_DARK, colors.RED]
+                cols = [self._theme.gff_colors['1a'], self._theme.gff_colors['1b']]
             elif '\tgene\t' in line:
-                cols = [colors.BLUE_DARK, colors.BLUE]
+                cols = [self._theme.gff_colors['2a'], self._theme.gff_colors['2b']]
             elif '\tmRNA\t' in line:
-                cols = [colors.YELLOW_DARK, colors.YELLOW]
+                cols = [self._theme.gff_colors['3a'], self._theme.gff_colors['3b']]
             elif '\tCDS\t' in line:
-                cols = [colors.MAGENTA_DARK, colors.MAGENTA]
+                cols = [self._theme.gff_colors['4a'], self._theme.gff_colors['4b']]
             elif '\texon\t' in line:
-                cols = [colors.CYAN_DARK, colors.CYAN]
+                cols = [self._theme.gff_colors['5a'], self._theme.gff_colors['5b']]
             else:
-                cols = [colors.GREEN_DARK, colors.GREEN]
+                cols = [self._theme.gff_colors['6a'], self._theme.gff_colors['6b']]
 
             # Print fields across line
             fields = line.split('\t')
