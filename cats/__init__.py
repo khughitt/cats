@@ -14,7 +14,6 @@ def format(input_, *args, **kwargs):
     from io import BufferedReader
     from Bio import SeqIO
     from Bio import Seq, SeqRecord
-    from Bio.Alphabet import IUPAC
     from cats.files import detect_format
 
     # Load config
@@ -68,7 +67,7 @@ def format(input_, *args, **kwargs):
             # Sequence string
             try:
                 seqs = [SeqRecord.SeqRecord(
-                           Seq.Seq(input_, IUPAC.IUPACUnambiguousDNA()))]
+                           Seq.Seq(input_))]
                 formatter = cats.formatters.SeqRecordFormatter(theme)
                 return formatter.format(seqs, **kwargs)
             except:
