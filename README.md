@@ -1,29 +1,54 @@
-cats
-====
+# cats
 
 [![Build Status](https://travis-ci.org/khughitt/cats.svg?branch=master)](https://travis-ci.org/khughitt/cats)
 
 Command-line tool for manipulating and displaying commonly used bioinformatic file formats.
 
-Screenshot
-----------
-
 ![cats screenshot](https://raw.github.com/khughitt/cats/master/docs/screenshot-grep.png)
 
-Installation
-------------
+# Installation
 
-*pre-requisites*
+**Using virtualenv**
 
-* [BioPython](http://biopython.org/wiki/Biopython)
-* [bcbio-gff](https://github.com/chapmanb/bcbb/tree/master/gff)
+First, create a new virtual environment in the desired location, e.g.:
 
-*installation:*
+```
+python -m venv ~/venv/cats
+```
 
-    sudo python setup.py install
+Activate the virtual environment and install the required dependencies:
 
-Usage
------
+```
+. ~/venv/cats/bin/activate
+pip install biopython bcbio-gff
+```
+
+Next, clone and install cats:
+
+```
+git clone https://github.com/khughitt/cats
+cd cats
+pip install .
+```
+
+**Using conda**
+
+No recipe for cats itself exists yet, but you can still use conda to easily isolate cats and install
+the necessary dependencies.
+
+[mamba](https://github.com/mamba-org/mamba) is used in place of conda below, as it is usually
+faster when it comes to dependency resolution and downloads:
+
+```
+mamba create -n cats --file requirements.txt
+mamba activate cats
+
+git clone https://github.com/khughitt/cats
+cd cats
+pip install .
+```
+
+# Usage
 
 Basic usage:
 
@@ -47,4 +72,14 @@ Or grep for an interesting feature and pipe the output into cats:
 Gzipped files are also supported, using zgrep:
 
     zgrep --color='always' "AAAAA$" input.fastq.gz | cats
+
+# Running tests
+
+To run the tests included with cats, install [pytest](https://docs.pytest.org/en/7.4.x/) in the
+environment you install cats in run `pytest` from within the cloned cats repo directory.
+
+# Depends on
+
+* [BioPython](http://biopython.org/wiki/Biopython)
+* [bcbio-gff](https://github.com/chapmanb/bcbb/tree/master/gff)
 
